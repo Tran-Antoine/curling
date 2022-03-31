@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private const int SPEED = 5;
     Vector3 m_Movement;
     // Start is called before the first frame update
     void Start()
@@ -20,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
 
         m_Movement.Set(horizontal, 0f, vertical);
         m_Movement.Normalize();
-        m_Movement *= SPEED;
+        m_Movement *= 5;
         transform.Translate(Time.deltaTime * m_Movement);
     }
 }
