@@ -17,6 +17,9 @@ public class GhostSheepBehavior : AgentBehaviour {
     private float playerRepulsion = 100F;
     private float ringRepulsion = 2F;
 
+    private const float CHASING_SPEED = 5;
+
+
     public void Start() {
         sheep = gameObject;
 
@@ -63,12 +66,28 @@ public class GhostSheepBehavior : AgentBehaviour {
 
     private Vector3 direction() {
 
-        Vector3 v = new Vector3(0,0,0);
-
-        foreach (GameObject p in players) {
-            v += reach(sheep, p) / sqDistance(sheep, p) * playerRepulsion;
+        if(sheep.CompareTag("Ghost"))
+        {
+            return toClosestPlayerDirection();
         }
         
+        if(sheep.CompareTag("Sheep"))
+        {
+            return runAwayDirection();
+        }
+        
+        return new Vector3(0, 0, 0);
+    }
+
+    private Vector3 runAwayDirection()
+    {
+        Vector3 v = new Vector3(0, 0, 0);
+
+        foreach (GameObject p in players)
+        {
+            v += reach(sheep, p) / sqDistance(sheep, p) * playerRepulsion;
+        }
+
         v += new Vector3(0, 0, 1 / reach(sheep, walls[0]).z) * wallRepulsion;
         v += new Vector3(0, 0, 1 / reach(sheep, walls[1]).z) * wallRepulsion;
         v += new Vector3(1 / reach(sheep, walls[2]).x, 0, 0) * wallRepulsion;
@@ -77,7 +96,8 @@ public class GhostSheepBehavior : AgentBehaviour {
         // uncomment this when ring is ready
         //v += reach(sheep, ring) / sqDistance(sheep, ring) * ringRepulsion;
 
-        foreach (GameObject o in obstacles) {
+        foreach (GameObject o in obstacles)
+        {
             v += reach(sheep, o) / sqDistance(sheep, o) * obstacleRepulsion;
         }
 
@@ -85,14 +105,42 @@ public class GhostSheepBehavior : AgentBehaviour {
         int angle = Random.Range(-60, -30);
         //negative rot
 
-        
+
         return Quaternion.Euler(0, angle, 0) * v;
+    }
+
+    private Vector3 toClosestPlayerDirection()
+    {
+        GameObject closestPlayer = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (GameObject p in players)
+        {
+            float distance = distanceTo(sheep, p);
+            if(distance < closestDistance)
+            {
+                closestPlayer = p;
+                closestDistance = distance;
+            }
+        }
+
+        if(closestPlayer == null)
+        {
+            return new Vector3(0, 0, 0);
+        }
+
+        return reach(closestPlayer, sheep).normalized * CHASING_SPEED;
     }
 
     private Vector3 reach(GameObject a, GameObject b)
     {
         Vector3 v = a.transform.position - b.transform.position;
         return new Vector3(v.x, 0, v.z);
+    }
+
+    private float distanceTo(GameObject a, GameObject b)
+    {
+        return reach(a, b).magnitude;
     }
 
     private float sqDistance(GameObject a, GameObject b)
