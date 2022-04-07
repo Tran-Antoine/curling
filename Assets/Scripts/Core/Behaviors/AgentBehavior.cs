@@ -8,6 +8,7 @@ public class AgentBehaviour : MonoBehaviour
     public virtual void Awake()
     {
         agent = gameObject.GetComponent<CelluloAgent>();
+        //this.tag = "Player";
     }
     public virtual void FixedUpdate()
     {

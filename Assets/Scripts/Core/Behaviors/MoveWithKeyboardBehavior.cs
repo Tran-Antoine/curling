@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.UI;
+using TMPro;
 
 //Input Keys
 public enum InputKeyboard{
@@ -11,6 +14,8 @@ public enum InputKeyboard{
 public class MoveWithKeyboardBehavior : AgentBehaviour
 {
     public InputKeyboard inputKeyboard; 
+    public int score = 0;
+    public TextMeshProUGUI scoreText;
 
     public void Start(){
         gameObject.tag = "Player";
@@ -26,4 +31,16 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
         return steering;
     }
 
+    void  OnCollisionEnter(Collision collisionInfo){
+        //Debug.Log(other.transform.parent.gameObject.name + " triggers.");
+        //Debug.Log("Tag of collider : " + other.attachedRigidbody.GetComponent<CelluloAgent>().tag);
+        if(collisionInfo.gameObject.CompareTag("Player")){
+            updateScore(score-1);
+        }
+    }
+
+    public void updateScore(int i){
+        score = Math.Max(0, i);
+        scoreText.text = "Player 1 : " + score + " points";
+    }
 }

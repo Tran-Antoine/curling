@@ -42,6 +42,7 @@ public class GhostSheepBehavior : AgentBehaviour {
     public override Steering GetSteering()
     {
         Steering steering = new Steering();
+
         steering.linear = direction() * agent.maxAccel;
 
         return steering;
@@ -63,6 +64,7 @@ public class GhostSheepBehavior : AgentBehaviour {
         GameObject[] output = {upmost, downmost, leftmost, rightmost};
         return output;
     }
+
 
     private Vector3 direction() {
 
@@ -105,9 +107,10 @@ public class GhostSheepBehavior : AgentBehaviour {
         int angle = Random.Range(-60, -30);
         //negative rot
 
-
+        
         return Quaternion.Euler(0, angle, 0) * v;
     }
+
 
     private Vector3 toClosestPlayerDirection()
     {
