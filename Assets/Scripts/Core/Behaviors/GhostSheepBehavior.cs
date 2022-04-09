@@ -13,11 +13,11 @@ public class GhostSheepBehavior : AgentBehaviour {
     private GameObject ring;
 
     private float obstacleRepulsion = 10F;
-    private float wallRepulsion = 200F;
-    private float playerRepulsion = 100F;
-    private float ringRepulsion = 2F;
+    private float wallRepulsion = 60F;
+    private float playerRepulsion = 120F;
+    private float ringRepulsion = 1F;
 
-    private const float CHASING_SPEED = 5;
+    private const float CHASING_SPEED = 5F;
 
 
     public void Start() {
@@ -44,7 +44,7 @@ public class GhostSheepBehavior : AgentBehaviour {
         Steering steering = new Steering();
 
         steering.linear = direction() * agent.maxAccel;
-
+		
         return steering;
     }
 
@@ -53,6 +53,7 @@ public class GhostSheepBehavior : AgentBehaviour {
         GameObject rightmost = walls[0];
         GameObject leftmost = walls[0];
         GameObject downmost = walls[0];
+
 
         foreach (GameObject w in walls) {
             upmost = upmost.transform.position.z > w.transform.position.z ? upmost : w;
@@ -64,7 +65,6 @@ public class GhostSheepBehavior : AgentBehaviour {
         GameObject[] output = {upmost, downmost, leftmost, rightmost};
         return output;
     }
-
 
     private Vector3 direction() {
 
@@ -96,18 +96,17 @@ public class GhostSheepBehavior : AgentBehaviour {
         v += new Vector3(1 / reach(sheep, walls[3]).x, 0, 0) * wallRepulsion;
 
         // uncomment this when ring is ready
-        //v += reach(sheep, ring) / sqDistance(sheep, ring) * ringRepulsion;
+        v += reach(sheep, ring) / sqDistance(sheep, ring) * ringRepulsion;
 
-        foreach (GameObject o in obstacles)
+        /**foreach (GameObject o in obstacles)
         {
             v += reach(sheep, o) / sqDistance(sheep, o) * obstacleRepulsion;
-        }
+        }*/
 
         //positive rot
-        int angle = Random.Range(-60, -30);
+        int angle = Random.Range(-50, -40);
         //negative rot
 
-        
         return Quaternion.Euler(0, angle, 0) * v;
     }
 
@@ -127,7 +126,7 @@ public class GhostSheepBehavior : AgentBehaviour {
             }
         }
 
-        if(closestPlayer == null)
+        if(closestPlayer == null || closestDistance < 2)
         {
             return new Vector3(0, 0, 0);
         }

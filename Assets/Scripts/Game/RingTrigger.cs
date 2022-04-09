@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RingTrigger : MonoBehaviour
-{   private GameObject[] players;
+{  
+    private GameObject[] players;
+    public AudioSource win;
+
     // Start is called before the first frame update
     void Start(){
-        //gameObject.tag = "Ring";
+
+        gameObject.tag = "Ring";
         if (players == null){
+            win = GetComponent<AudioSource>();
             players = GameObject.FindGameObjectsWithTag("Player");
-            }         
+        }         
     }
 
     // Update is called once per frame
@@ -17,7 +22,9 @@ public class RingTrigger : MonoBehaviour
     {
         
     }
-     void OnTriggerEnter(Collider other){
+
+    void OnTriggerEnter(Collider other){
+
         //Debug.Log(other.transform.parent.gameObject.name + " triggers.");
         //Debug.Log("Tag of collider : " + other.attachedRigidbody.GetComponent<CelluloAgent>().tag);
 
@@ -34,7 +41,7 @@ public class RingTrigger : MonoBehaviour
             }
             int score = closestPlayer.GetComponent<MoveWithKeyboardBehavior>().score + 1;
             closestPlayer.GetComponent<MoveWithKeyboardBehavior>().updateScore(score);
-
+            win.Play();
         }
     }
 }

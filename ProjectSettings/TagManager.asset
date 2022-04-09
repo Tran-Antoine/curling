@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - Sheep
   - Dog
+  - Ghost
+  - Ring
   layers:
   - Default
   - TransparentFX

@@ -16,9 +16,12 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
     public InputKeyboard inputKeyboard; 
     public int score = 0;
     public TextMeshProUGUI scoreText;
+    public int number;
+    public AudioSource lost;
 
     public void Start(){
         gameObject.tag = "Player";
+        lost = GetComponent<AudioSource>();
     }
 
     public override Steering GetSteering()
@@ -34,13 +37,14 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
     void  OnCollisionEnter(Collision collisionInfo){
         //Debug.Log(other.transform.parent.gameObject.name + " triggers.");
         //Debug.Log("Tag of collider : " + other.attachedRigidbody.GetComponent<CelluloAgent>().tag);
-        if(collisionInfo.gameObject.CompareTag("Player")){
+        if(collisionInfo.gameObject.CompareTag("Ghost")){
             updateScore(score-1);
+            lost.Play();
         }
     }
 
     public void updateScore(int i){
-        score = Math.Max(0, i);
-        scoreText.text = "Player 1 : " + score + " points";
+        score = i;
+        scoreText.text = score.ToString();
     }
 }
