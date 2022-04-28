@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 
 /// <summary>
@@ -7,22 +6,22 @@ using System;
 /// </summary>
 public class CelluloConnection : MonoBehaviour
 {
-    private CelluloAgent agent; 
-    public string MacAddr {get; private set;} = null; //Mac address of the robot it is connected to
-    private ScannerListElement scannerElementList = null;//List elements related to this agent
-    private CelluloListElement celluloElementList = null;
+    private CelluloAgent agent; //!<The corresponding Cellulo Agent
+    public string MacAddr {get; private set;} = null; //!<Mac address of the robot it is connected to
+    private ScannerListElement scannerElementList = null;//!<List elements related to this agent
+    private CelluloListElement celluloElementList = null;//!< The corresponding Element List (UI) 
 
     protected void Awake(){
         agent = GetComponent<CelluloAgent>();
     }
     private void Update(){
-        // Assign the cellulo list element
+        // !< Assign the cellulo list element
         if (celluloElementList == null)
         {
             celluloElementList = CelluloManager._celluloPanelList[agent.agentID].GetComponent<CelluloListElement>();
         }
         
-        // Disconnect in case the robot is null
+        //!< Disconnect in case the robot is null
         if (agent._celluloRobot == null)
         {
             celluloElementList.ResetPanel(ConnectionStatus.ConnectionStatusDisconnected);
@@ -78,12 +77,20 @@ public class CelluloConnection : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Implements the response to a shutdown event: disconnect from a the cellulo robot and update UI. 
+    /// </summary>
     private void OnShutDown(object sender, EventArgs e)
     {
         celluloElementList.ResetPanel(ConnectionStatus.ConnectionStatusDisconnected);
         scannerElementList.SetConnected(ConnectionStatus.ConnectionStatusDisconnected);
         Invoke("DisconnectFromCelluloRobot", 1);
     }
+    
+    /// <summary>
+    /// Implements the response to a connection status event: update the connection status and its corresponding UI 
+    /// </summary>
     private void OnConnectionStatusChanged(object sender, EventArgs e){
         ConnectionStatus state = agent._celluloRobot.ConnectionStatus;
         celluloElementList.ResetPanel(state);
@@ -110,7 +117,7 @@ public class CelluloConnection : MonoBehaviour
         }
     }
 
-    public void Destroy(){
+    public void onDestroy(){
         DisconnectFromCelluloRobot();
     }
 

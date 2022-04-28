@@ -8,40 +8,39 @@ using System;
 /// </summary>
 /// <remarks>
 /// This is dependent on an external library "cellulolib" to work correctly
-/// This library can be found here : https://c4science.ch/source/cellulo-unity/browse/master/cellulolib/
-/// Be careful : this library has been tested to work correctly on Windows and Linux, but has some bugs on MacOS
-///
-/// If you wish to reuse this script on another Unity projects, make sure to also add the CelluloConfig.cs file as it defines enums
+/// Depends on CelluloConfig.cs file as it defines enums
 /// </remarks>
 public class Cellulo
 {
-    // Id inside the library
     private long id;
 
-    // Properties
+    //!<Properties
     public bool Kidnapped { get; private set; }
     public Touch[] TouchKeys { get; private set; }
     public string MacAddr { get; private set; }
-    private bool IsShuttingDown = false;
-    private bool IsLowBattery = false;
-
     public ConnectionStatus ConnectionStatus { get; private set; }
     public VisualEffect VisualEffect { get; private set; }
     public LEDResponseMode LedResponseMode { get; private set; }
     public bool CasualBackdriveAssistEnabled { get; private set; }
     public LocomotionInteractivityMode LocomotionInteractivityMode { get; private set; }
     public bool GestureEnabled { get; private set; }
-    public int _id;// Id inside the game
-    public Vector3 pose;// Position(x,y,theta) of cellulo
+    public int _id; //!<Id inside the game
+    public Vector3 pose; //!<Position(x,y,theta) of Cellulo
+
+    private bool IsShuttingDown = false;
+    private bool IsLowBattery = false;
 
     //Events 
-    public event EventHandler OnKidnappedChanged;
-    public event EventHandler OnShutDown;
-    public event EventHandler OnConnectionStatusChanged;
-    public event TouchEventDelegate OnTouchBegan;
-    public event TouchEventDelegate OnTouchReleased;
-    public event TouchEventDelegate OnLongTouch;
-    public delegate void TouchEventDelegate(int key);
+    public event EventHandler OnKidnapped; //!< Event when Kidnapping occurs
+ 
+    public event EventHandler OnUnKidnapped; //!< Event when Kidnapping ends   
+    public event EventHandler OnShutDown; //!< Event when the robot is shutting down 
+    public event EventHandler OnConnectionStatusChanged; //!< Event when connection status is changed 
+    public delegate void TouchEventDelegate(int key); //!< Delegate for Touch Event with one parameter being the key number. 
+    public event TouchEventDelegate OnTouchBegan; //!<Event when touch began
+    public event TouchEventDelegate OnTouchReleased; //!<Event when touch release
+    public event TouchEventDelegate OnLongTouch; //!<Event when long touch detected
+    
 
     /// <summary>
     /// Cellulo contructor with no default id or pose
@@ -101,7 +100,7 @@ public class Cellulo
     }
 
     /// <summary>
-    /// Initialize a real robot and connect to it
+    /// Initialize a real robot and connect to it through a specific local adapter. 
     /// </summary>
     /// <param name="macAddr">
     /// The MAC address of the robot to connect to
@@ -129,6 +128,7 @@ public class Cellulo
         CasualBackdriveAssistEnabled = false;
         LocomotionInteractivityMode = LocomotionInteractivityMode.LocomotionInteractivityModeNormal;
         GestureEnabled = false;
+        Kidnapped = false;
     }
 
     /// <summary>
@@ -149,12 +149,12 @@ public class Cellulo
     public void UpdateProperties()
     {
         if (id != 0)
-        {
-
+        {   
             if (GetKidnapped() != Kidnapped)
             {
                 Kidnapped = GetKidnapped();
-                OnKidnappedChanged?.Invoke(this, EventArgs.Empty);
+                if(Kidnapped) OnKidnapped?.Invoke(this, EventArgs.Empty);
+                else OnUnKidnapped?.Invoke(this, EventArgs.Empty);
             }
             if (ConnectionStatus != GetConnectionStatus())
             {
@@ -200,19 +200,10 @@ public class Cellulo
     // Cellulo methods export below
 
     /// <summary>
-    /// Initialize the library, must call a bit before connecting
+    /// Initialize the cellulo library, create the cellulo thread, must be called once at the start on the game before connecting to real cellulos
     /// </summary>
     [DllImport("cellulolib")]
     public static extern void initialize();
-
-    /// <summary>
-    /// DeInitialize the library
-    /// </summary>
-    /// <remarks>
-    /// Warning : this currently freezes the editor - do not use it
-    /// </remarks>
-    [DllImport("cellulolib")]
-    private static extern void deInitialize();
 
     /// <summary>
     /// Get a new robot from the pool
@@ -969,7 +960,7 @@ public class Cellulo
     }
 
     [DllImport("cellulolib")]
-    private static extern long getKidnapped(long robot);
+    private static extern bool getKidnapped(long robot);
     /// <summary>
     /// Returns whether the robot is not on encoded paper.
     /// </summary>
@@ -983,7 +974,7 @@ public class Cellulo
             Debug.LogWarning("Robot is broken (connection to pool failed). Cannot do API call");
             return (false);
         }
-        return getKidnapped(id) > 0;
+        return getKidnapped(id);
     }
 
     [DllImport("cellulolib")]

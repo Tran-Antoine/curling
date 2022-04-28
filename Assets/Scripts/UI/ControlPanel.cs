@@ -342,6 +342,20 @@ public class ControlPanel : MonoBehaviour
         }
     }
 
+    public void MoveOnIceOnClick(){
+        agent.MoveOnIce();
+    }
+
+    public void MoveOnMudOnClick(){
+        agent.MoveOnMud();
+    }
+
+        public void MoveOnStoneOnClick(){
+        agent.MoveOnStone();
+    }
+        public void MoveOnSandpaperOnClick(){
+        agent.MoveOnSandpaper();
+    }
     public void GoVibrationOnMotionOnClick()
     {
         if (robot != null)

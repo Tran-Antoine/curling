@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Manage one element of the Cellulo list
+/// Manage one UI element of the Cellulo list
 /// </summary>
 public class CelluloListElement : MonoBehaviour
 {
@@ -59,9 +59,9 @@ public class CelluloListElement : MonoBehaviour
     }
 
     /// <summary>
-    /// Set Local View Follower
+    /// Set Selected Cellulo for Control Panel
     /// </summary>
-    public void SetLocalViewFollower(bool on)
+    public void SetSelectedCelluloControlPanel(bool on)
     {
         Config.controlPanelSelectedCellulo = _id; 
     }

@@ -12,20 +12,20 @@ public enum BatteryState {
         /** Charger present, battery full                                       */ BatteryStateCharged = 3, 
         /** Charger charging disabled, voltage too low or battery not present   */ BatteryStateShutdown = 4, 
         /** Thermal fault or charge timeout                                     */ BatteryStateError = 5, 
-        BatteryStateNumElements 
+        /** Number of Battery states                                            */ BatteryStateNumElements 
 }
 
 public enum LEDResponseMode {
         /** LEDs respond to touches by slightly increasing brightness   */ LEDResponseModeResponsiveIndividual = 0,
         /** LEDs don't respond to touches                               */ LEDResponseModeAbsolute = 1,
-        /** LEDs respond to hold by all changing color                  */ LEDResponseModeResponsiveHold = 2,
-        LEDResponseModeNumElements
+        /** LEDs respond to hold by all changing color  to green (requires Gesture Hold to be true)                */ LEDResponseModeResponsiveHold = 2,
+        /** Number of LED Response Modes                                */ LEDResponseModeNumElements
 }
 
 public enum LocomotionInteractivityMode {
         /** Robot moves normally        */ LocomotionInteractivityModeNormal = 0,
         /** Robot requires Hold gesture */ LocomotionInteractivityModeRequiresHold = 1,
-        LocomotionInteractivityModeNumElements
+        /** Number of Modes             */ LocomotionInteractivityModeNumElements
 }
 
 public enum VisualEffect { 
@@ -39,7 +39,7 @@ public enum VisualEffect {
         /** Alert forever (value*20 is LED on time in milliseconds)         */ VisualEffectBlink = 7, 
         /** Breathe animation (value unused)                                */ VisualEffectBreathe = 8,  
         /** Slower breathe-like animation (value unused)                    */ VisualEffectPulse = 9, 
-        VisualEffectNumElements 
+        /** Number of Visual Effects                                        */ VisualEffectNumElements 
 }
 
 public enum Gesture {

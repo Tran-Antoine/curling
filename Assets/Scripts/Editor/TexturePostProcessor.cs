@@ -5,18 +5,27 @@ using System;
 
 public class TexturePostProcessor : AssetPostprocessor
 {
-    void OnPostprocessTexture(Texture2D texture)
+    void OnPreprocessTexture()
     {
         TextureImporter importer = assetImporter as TextureImporter;
         importer.anisoLevel = 1;
         importer.filterMode = FilterMode.Bilinear;
         importer.npotScale = TextureImporterNPOTScale.ToLarger;
         importer.textureType = TextureImporterType.Sprite;
-        importer.spritePivot = new Vector2(0,1);//TOPLEFT
+        
+        // Only post process the dimensions if they are in a 
+        // "Maps" folder or a sub folder of it.
+        /*string lowerCaseAssetPath = assetPath.ToLower();
+        if (lowerCaseAssetPath.IndexOf("/Maps/") == -1)
+            return;
+        */
         int width, height; 
         GetImageSize(importer,out width,out height);
-        importer.mipmapEnabled = true;
+        importer.mipmapEnabled = false;
         importer.spritePixelsPerUnit =(float) Math.Min(height,width)/10;
+        EditorUtility.SetDirty(importer);
+        importer.SaveAndReimport();
+        
     }
     public static bool GetImageSize(TextureImporter importer, out int width, out int height) {
             if (importer != null) {

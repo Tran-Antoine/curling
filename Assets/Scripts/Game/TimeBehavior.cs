@@ -40,9 +40,18 @@ public class TimeBehavior : MonoBehaviour
     private GameObject sheep;
 
 
+    public static Color p1 = new Color(66/256f, 135/256f, 60/256f);
+    public static Color p2 = new Color(204/256f, 155/256f, 45/256f);
+
     // Start is called before the first frame update
     void Start()
     {   
+        p1 = Settings.p1_color;
+        //Debug.Log("P1 : " + p1);
+        p2 = Settings.p2_color;
+        //Debug.Log("P2 : " + p2);
+
+       
 
         ghostText.enabled = false;
         globalText.enabled = true;
@@ -53,12 +62,22 @@ public class TimeBehavior : MonoBehaviour
         slider.value = 0;
         Time.timeScale = 0f;
         modeSwitch = GetComponent<AudioSource>();
+
+        
         
 
         if (players == null){
             players = GameObject.FindGameObjectsWithTag("Player");
         }   
         sheep = GameObject.FindWithTag("Sheep");
+
+
+        /*Debug.Log(player1);
+        Debug.Log(player2);*/
+
+        
+        players[0].GetComponent<CelluloAgent>().SetVisualEffect(VisualEffect.VisualEffectConstAll, p1, 1);
+        players[1].GetComponent<CelluloAgent>().SetVisualEffect(VisualEffect.VisualEffectConstAll, p2, 1);
     }
 
     //generates a random time for the ghost mode
@@ -84,8 +103,7 @@ public class TimeBehavior : MonoBehaviour
         return (playerNumber, maxScore);
     }
     
-    private Color p1 = new Color(66/256f, 135/256f, 60/256f);
-    private Color p2 = new Color(204/256f, 155/256f, 45/256f);
+    
     private Color sheepColor = new Color(33/256f, 192/256f, 212/256f);
     private Color ghostColor = new Color(256/256f, 45/256f, 45/256f);
 

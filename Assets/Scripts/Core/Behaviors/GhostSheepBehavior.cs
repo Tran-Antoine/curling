@@ -126,7 +126,7 @@ public class GhostSheepBehavior : AgentBehaviour {
             }
         }
 
-        if(closestPlayer == null || closestDistance < 2)
+        if(closestPlayer == null || closestDistance < 1.80f)
         {
             return new Vector3(0, 0, 0);
         }
