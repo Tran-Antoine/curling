@@ -16,8 +16,9 @@ public class TimeBehavior : MonoBehaviour
     private GameObject[] players;
     public Slider slider;
     public Button startButton;
+    public Button resumeButton;
 
-    public const float GAME_DURATION = 120.0f;
+    public float GAME_DURATION = RadioButtons.getTime();
     //the delay between each recomputation for the ghost mode
     private const float RECOMPUTE_TIME = 15.0f;
 
@@ -110,7 +111,7 @@ public class TimeBehavior : MonoBehaviour
 
     // Update is called once per frame
     void Update(){ 
-        if (startButton.IsActive()) {
+        if (startButton.IsActive() || resumeButton.IsActive()) {
             //Time.timeScale = 0f;
             return; 
         }
@@ -170,5 +171,13 @@ public class TimeBehavior : MonoBehaviour
             ghostText.text = "Ghost : " + Math.Round(timer, 0).ToString("00");
         }
       }
+    }
+    public void freezeTimeScale()
+    {
+    Time.timeScale = 0f;
+    }
+
+    public void setGameTime(){
+        GAME_DURATION = RadioButtons.getTime();
     }
 }

@@ -10,6 +10,8 @@ TagManager:
   - Dog
   - Ghost
   - Ring
+  - Menu
+  - Music
   layers:
   - Default
   - TransparentFX
