@@ -17,7 +17,12 @@ public class musicManagerGame : MonoBehaviour
         if (musics.Length >= 1) {
         BGSoundScript music = Object.FindObjectsOfType<BGSoundScript>()[0];
         audio = music.GetComponent<AudioSource>();
-        paused = false;
+        if(!audio.enabled) {
+            audio.enabled = true;
+            audio.Pause();
+        }
+        paused = !audio.isPlaying;
+        musicToggle.isOn = audio.isPlaying;
         slider.value = audio.volume;
         } else {
             slider.value = 0;
@@ -31,16 +36,12 @@ public class musicManagerGame : MonoBehaviour
 
     public void PausePlay(){
         if (!musicToggle.isOn){
-            if (!paused){
-                audio.Pause();
-                paused = true;
-            }
+             audio.Pause();
+             paused = true;
         }
         if(musicToggle.isOn){
-            if (paused){
-                audio.Play(0);
-                paused = false;
-            }
+            audio.Play(0);
+            paused = false;
         }
     }
 }

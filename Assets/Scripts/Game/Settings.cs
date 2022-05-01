@@ -13,8 +13,8 @@ public class Settings : MonoBehaviour
     public Button p1_button;
     public Button p2_button;
 
-    public static InputKeyboard p1_keyboard;
-    public static InputKeyboard p2_keyboard;
+    public static InputKeyboard p1_keyboard = InputKeyboard.wasd;
+    public static InputKeyboard p2_keyboard = InputKeyboard.arrows;
 
     public TextMeshProUGUI p1_control;
     public TextMeshProUGUI p2_control;

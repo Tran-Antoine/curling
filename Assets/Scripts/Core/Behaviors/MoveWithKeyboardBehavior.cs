@@ -19,12 +19,24 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
     public TextMeshProUGUI scoreText;
     public int number;
     public AudioSource lost;
-    //private GameObject player;
+
+    private bool hasSpaceGem = false;
+    private float timeLeftWithGem = 0f;
+    private const float TOTAL_GEM_TIME = 8f;
+    private SpaceGem spaceGem;
+    public GameObject gemIndicator;
+    public AudioSource pointsTheft;
+    public AudioSource collected;
+    public TimeBehavior timeBehavior;
+
+    private bool clicked;
 
     public void Start(){
         gameObject.tag = "Player";
-        lost = GetComponent<AudioSource>();
-        //player =  GameObject.FindGameObjectWithTag("Player").transform.position;
+        AudioSource[] sounds = GetComponents<AudioSource>();
+        lost = sounds[0];
+        pointsTheft = sounds[1];
+        collected = sounds[2];
 
         switch (number)
         {
@@ -42,12 +54,7 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
     float zmvt = 0f;
 
     public override Steering GetSteering()
-       {   
-        
-        /**float xmvt = 0f;
-        float zmvt =*/
-        //float zmvt; 
-        
+       {  
         switch (inputKeyboard)
         {
             case InputKeyboard.arrows : 
@@ -61,11 +68,13 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
                 break;
                 
             case InputKeyboard.mouse :
-                Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Vector3 cellulo = gameObject.transform.position;
-                Vector3 dir = pz - cellulo;
-                xmvt = dir.x;
-                zmvt = dir.z;
+                if (clicked) {
+                    Vector3 pz = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector3 cellulo = gameObject.transform.position;
+                    Vector3 dir = pz - cellulo;
+                    xmvt = dir.x;
+                    zmvt = dir.z;
+                }
                 break;
         }
 
@@ -77,13 +86,50 @@ public class MoveWithKeyboardBehavior : AgentBehaviour
 
     void  OnCollisionEnter(Collision collisionInfo){
         if(collisionInfo.gameObject.CompareTag("Ghost")){
-            updateScore(score-1);
+            updateScore(-1);
             lost.Play();
+        }
+        if(collisionInfo.gameObject.CompareTag("SpaceGem")){
+            hasSpaceGem = true;
+            timeLeftWithGem = TOTAL_GEM_TIME;
+            spaceGem = collisionInfo.gameObject.GetComponent<SpaceGem>();
+            spaceGem.caughtByPlayer();
+            collected.Play();
+            gemIndicator.SetActive(true);
+        }
+        if(collisionInfo.gameObject.CompareTag("Player") && hasSpaceGem){
+            pointsTheft.Play();
+            spaceGem.lostGem();
+            collisionInfo.gameObject.GetComponent<MoveWithKeyboardBehavior>().updateScore(-2);
+            updateScore(2);
+            
+            hasSpaceGem = false;
+            timeLeftWithGem = 0f;
+            gemIndicator.SetActive(false);
+        }
+        if(collisionInfo.gameObject.CompareTag("TimeGem")){
+            collected.Play();
+            timeBehavior.playerGotTimeGem(this);
+            collisionInfo.gameObject.GetComponent<TimeGem>().caughtByPlayer();
+        }
+    }
+
+    void Update(){
+        if (timeLeftWithGem >= 0f){
+            timeLeftWithGem -= Time.deltaTime;
+        } else if(hasSpaceGem) {
+            hasSpaceGem = false;
+            spaceGem.lostGem();
+            gemIndicator.SetActive(false);
         }
     }
 
     public void updateScore(int i){
-        score = i;
+        score += i;
         scoreText.text = score.ToString();
+    }
+
+    void OnMouseDown(){
+        clicked = true;
     }
 }

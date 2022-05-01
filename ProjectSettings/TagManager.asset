@@ -12,6 +12,8 @@ TagManager:
   - Ring
   - Menu
   - Music
+  - SpaceGem
+  - TimeGem
   layers:
   - Default
   - TransparentFX

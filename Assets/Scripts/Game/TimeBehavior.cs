@@ -6,7 +6,8 @@ using UnityEngine.UI;
 using System;
 
 public class TimeBehavior : MonoBehaviour
-{   
+{   private const float WAITING_TIME_GEMS = 5.0f;
+
     private const int TIE = -999;
     public TextMeshProUGUI ghostText;
     public TextMeshProUGUI globalText;
@@ -17,6 +18,8 @@ public class TimeBehavior : MonoBehaviour
     public Slider slider;
     public Button startButton;
     public Button resumeButton;
+    public SpaceGem spaceGem;
+    public TimeGem timeGem;
 
     public float GAME_DURATION = RadioButtons.getTime();
     //the delay between each recomputation for the ghost mode
@@ -51,7 +54,7 @@ public class TimeBehavior : MonoBehaviour
         //Debug.Log("P1 : " + p1);
         p2 = Settings.p2_color;
         //Debug.Log("P2 : " + p2);
-
+        spaceGem.Start();
        
 
         ghostText.enabled = false;
@@ -118,7 +121,10 @@ public class TimeBehavior : MonoBehaviour
         
         Time.timeScale = 1f;
         globalTimer += Time.deltaTime;
-        
+
+        spaceGem.UpdateBehavior();
+        timeGem.UpdateBehavior();
+
         if (globalTimer > GAME_DURATION + 1) {
             Time.timeScale = 0f;
             (int player, int score) text = getWinner();
@@ -179,5 +185,23 @@ public class TimeBehavior : MonoBehaviour
 
     public void setGameTime(){
         GAME_DURATION = RadioButtons.getTime();
+    }
+
+    public void playerGotTimeGem(MoveWithKeyboardBehavior player){
+        MoveWithKeyboardBehavior opponent = player;
+        if (players[0].GetComponent<MoveWithKeyboardBehavior>() == player) {
+            opponent = players[1].GetComponent<MoveWithKeyboardBehavior>();
+        } else{
+            opponent = players[0].GetComponent<MoveWithKeyboardBehavior>();
+        }
+
+        if (opponent.score > player.score){
+            // player is losing
+            GAME_DURATION = GAME_DURATION * Gems.TIME_GEM_INCREMENT;
+        } else if(opponent.score < player.score){
+            //if player winning
+            GAME_DURATION = GAME_DURATION * Gems.TIME_GEM_DECREMENT;
+        }
+
     }
 }

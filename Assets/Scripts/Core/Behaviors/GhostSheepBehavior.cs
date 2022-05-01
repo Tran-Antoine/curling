@@ -19,6 +19,8 @@ public class GhostSheepBehavior : AgentBehaviour {
 
     private const float CHASING_SPEED = 5F;
 
+    private int latency = 0;
+
 
     public void Start() {
         sheep = gameObject;
@@ -95,13 +97,7 @@ public class GhostSheepBehavior : AgentBehaviour {
         v += new Vector3(1 / reach(sheep, walls[2]).x, 0, 0) * wallRepulsion;
         v += new Vector3(1 / reach(sheep, walls[3]).x, 0, 0) * wallRepulsion;
 
-        // uncomment this when ring is ready
         v += reach(sheep, ring) / sqDistance(sheep, ring) * ringRepulsion;
-
-        /**foreach (GameObject o in obstacles)
-        {
-            v += reach(sheep, o) / sqDistance(sheep, o) * obstacleRepulsion;
-        }*/
 
         //positive rot
         int angle = Random.Range(-50, -40);
@@ -126,8 +122,9 @@ public class GhostSheepBehavior : AgentBehaviour {
             }
         }
 
-        if(closestPlayer == null || closestDistance < 1.80f)
+        if(closestPlayer == null || latency > 0)
         {
+            latency -=1;
             return new Vector3(0, 0, 0);
         }
 
@@ -166,12 +163,20 @@ public class GhostSheepBehavior : AgentBehaviour {
         }
         if(comp(obj, "Player")){
             playerRepulsion = 10000F;
+            latency = 40;
         }
 
         if(comp(obj, "Ring")) {
             ringRepulsion = 10F;
         }
-    }
+        if(comp(obj, "SpaceGem")) {
+            SpaceGem gem = obj.gameObject.GetComponent<SpaceGem>();
+            gem.respawn();
+        }
+        if(comp(obj, "TimeGem")) {
+            TimeGem gem = obj.gameObject.GetComponent<TimeGem>();
+            gem.respawn();
+        }}
 
     void OnCollisionExit(Collision obj){
         if(comp(obj, "Obstacle")){
