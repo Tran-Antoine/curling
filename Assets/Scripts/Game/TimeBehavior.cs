@@ -114,7 +114,12 @@ public class TimeBehavior : MonoBehaviour
 
     // Update is called once per frame
     void Update(){ 
-        //cellulo
+
+        // --------------------------------------------------------------------------------
+        // THE FOLLOWING CODE IS UNTESTED SINCE WE DID NOT HAVE ENOUGH TIME WITH THE ROBOTS
+        // Remove "isStarting" to disable the "start by pressing on a led" behavior if it
+        // doesn't work
+        // --------------------------------------------------------------------------------
         bool isStarting = false;
         foreach (GameObject p in players)
             {
@@ -124,11 +129,18 @@ public class TimeBehavior : MonoBehaviour
                 }
                 isStarting &= oneButton;
             }
-        if (startButton.IsActive() || !isStarting || resumeButton.IsActive()) {
-            //Time.timeScale = 0f;
+
+        if(startButton.IsActive() && isStarting)
+        {
+            startButton.onClick.Invoke();
+        }
+
+
+        if (startButton.IsActive() || resumeButton.IsActive()) {
             return; 
         }
-        
+
+
         Time.timeScale = 1f;
         globalTimer += Time.deltaTime;
 
@@ -145,8 +157,8 @@ public class TimeBehavior : MonoBehaviour
                 gameOverText.color = new Color(66f/256f, 135f/256f, 60f/256f);
                 gameOverText.text = "It's a tie ! Both players win with " + text.score.ToString() + " points";
             } else {
-            gameOverText.color = text.player == 1 ? p1 : p2;
-            gameOverText.text = "Player " + text.player.ToString("0") + " won! Score : " + text.score.ToString();
+                gameOverText.color = text.player == 1 ? p1 : p2;
+                gameOverText.text = "Player " + text.player.ToString("0") + " won! Score : " + text.score.ToString();
             }
 
             restart.gameObject.SetActive(true);
