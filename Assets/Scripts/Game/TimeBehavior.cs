@@ -114,7 +114,17 @@ public class TimeBehavior : MonoBehaviour
 
     // Update is called once per frame
     void Update(){ 
-        if (startButton.IsActive() || resumeButton.IsActive()) {
+        //cellulo
+        bool isStarting = false;
+        foreach (GameObject p in players)
+            {
+                bool oneButton = false;
+                for(int i = 0; i < (int)Touch.TouchNumElements; i++){
+                   oneButton |= p.GetComponent<CelluloAgent>()._celluloRobot.GetTouch(i) == Touch.LongTouch;
+                }
+                isStarting &= oneButton;
+            }
+        if (startButton.IsActive() || !isStarting || resumeButton.IsActive()) {
             //Time.timeScale = 0f;
             return; 
         }

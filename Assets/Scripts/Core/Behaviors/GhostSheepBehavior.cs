@@ -23,6 +23,9 @@ public class GhostSheepBehavior : AgentBehaviour {
 
 
     public void Start() {
+
+
+
         sheep = gameObject;
 
         sheep.tag = "Sheep";     
@@ -39,6 +42,19 @@ public class GhostSheepBehavior : AgentBehaviour {
         {
             ring = GameObject.FindWithTag("Ring");
         }
+    }
+
+    public void Update() {
+        foreach (GameObject p in players)
+            {
+                p.GetComponent<CelluloAgent>().SetCasualBackdriveAssistEnabled(sheep.CompareTag("Sheep"));
+                if(sheep.CompareTag("Ghost")) {
+                    p.GetComponent<CelluloAgent>().MoveOnStone();
+                }
+                else{
+                    p.GetComponent<CelluloAgent>().MoveOnIce();
+                }
+        }   
     }
 
     public override Steering GetSteering()
