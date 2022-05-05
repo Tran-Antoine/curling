@@ -1,10 +1,10 @@
 public interface Game
 {
 
-    void playTurn();
+    void PlayTurn();
 
-    void onGameStarted();
-    void onGameEnded();
-    void onTurnEnded();
-    void onThrowEnded();
+    void OnGameStarted();
+    void OnGameEnded();
+    void OnTurnEnded();
+    void OnThrowEnded();
 }
