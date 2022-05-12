@@ -13,8 +13,8 @@ public class Settings : MonoBehaviour
     public Button p1_button;
     public Button p2_button;
 
-    public static InputKeyboard p1_keyboard = InputKeyboard.wasd;
-    public static InputKeyboard p2_keyboard = InputKeyboard.arrows;
+    //public static InputKeyboard p1_keyboard = InputKeyboard.wasd;
+    //public static InputKeyboard p2_keyboard = InputKeyboard.arrows;
 
     public TextMeshProUGUI p1_control;
     public TextMeshProUGUI p2_control;
@@ -25,7 +25,7 @@ public class Settings : MonoBehaviour
         p1_color = p1_button.image.color;
         p2_color = p2_button.image.color;
 
-        switch (p1_control.text)
+        /*switch (p1_control.text)
         {
             case "ARROWS" : 
                 p1_keyboard = InputKeyboard.arrows;
@@ -53,6 +53,6 @@ public class Settings : MonoBehaviour
             case "WASD" : 
                 p2_keyboard = InputKeyboard.wasd;
                 break;
-        }
+        }*/
     }
 }

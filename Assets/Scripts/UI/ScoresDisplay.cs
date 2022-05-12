@@ -14,7 +14,7 @@ public class ScoresDisplay : MonoBehaviour
     public TextMeshProUGUI p2_score;
 
     void Start(){
-        p1_panel.color = TimeBehavior.p1;
+        /*p1_panel.color = TimeBehavior.p1;
         Color lol = p1_panel.color;
         lol.a = 0.5f;
         p1_panel.color = lol;
@@ -25,7 +25,7 @@ public class ScoresDisplay : MonoBehaviour
         p2_panel.color = lol;
 
         p1_score.color = TimeBehavior.p1;
-        p2_score.color = TimeBehavior.p2;
+        p2_score.color = TimeBehavior.p2;*/
 
 
     }
