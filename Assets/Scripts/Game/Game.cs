@@ -3,8 +3,9 @@ public interface Game
 
     void PlayTurn();
 
-    void OnGameStarted();
-    void OnGameEnded();
-    void OnTurnEnded();
-    void OnThrowEnded();
+    void StartGame();
+    void EndGame();
+    void EndTurn();
+    void EndThrow();
+    void MarkReadyForThrow();
 }

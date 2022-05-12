@@ -5,6 +5,12 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+
+    private IOManager ioManager;
+
+    public GameManager() {
+        this.ioManager = new IOManager();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -15,5 +21,10 @@ public class GameManager : MonoBehaviour
     void Update()
     {
                 
+    }
+
+    void CreateNewGame()
+    {
+
     }
 }

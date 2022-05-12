@@ -5,6 +5,7 @@ public class GameState
 
     private static const int N_PLAYERS = 2;
 
+    private boolean waitingForNext;
     private int turns;
     private int remainingTurns; // number of turns remaining 
     private int activePlayer; // 0 => first player, 1 => second player
@@ -20,8 +21,17 @@ public class GameState
         this.activePlayer = 0;
         this.scores = new int[N_PLAYERS];
         this.stones = new List<StaticStone>(turns * N_PLAYERS);
+        this.waitingForNext = false;
     }
 
+    public bool IsWaitingForNext() {
+        return waitingForNext;
+    }
+
+    public void SetWaitingForNext(bool val) {
+        this.waitingForNext = val;
+    }
+    
     public int GetRemainingTurns()
     {
         return remainingTurns;
