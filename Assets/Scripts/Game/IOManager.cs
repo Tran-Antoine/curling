@@ -2,11 +2,11 @@
 public class IOManager 
 {
 
-    private CurlingGame game;
+    private Game game;
 
     private Trajectory pendingData;
 
-    public void SetGame(CurlingGame game) 
+    public void SetGame(Game game) 
     {
         this.game = game;
     }
