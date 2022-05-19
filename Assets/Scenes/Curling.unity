@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 96296545}
   - component: {fileID: 96296544}
   - component: {fileID: 96296547}
+  - component: {fileID: 96296548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -305,6 +306,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5dad6f0b24e6146a0442b1b7161181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &96296548
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96296543}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &217767956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -316,6 +333,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 75abddc850e1e6649899019e4d71eab5, type: 3}
+    - target: {fileID: 1300460603369726360, guid: 0db235a91f632524fa83dc644ff1b415, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 1300460603436986234, guid: 0db235a91f632524fa83dc644ff1b415, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
