@@ -3,8 +3,8 @@ using UnityEngine;
 public class StaticStone
 {
     private Vector3 position;
-    private const int player;
-    private const int id;
+    private int player;
+    private int id;
 
     public StaticStone(Vector3 position, int player, int id)
     {

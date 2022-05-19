@@ -4,13 +4,9 @@ public class CurlingGame : Game
     private GameState state;
     private IOManager manager;
 
-    public CurlingGame(int turns)
+    public CurlingGame(int turns, IOManager manager)
     {
         this.state = new GameState(turns);
-    }
-
-    public void SetIO(IOManager manager)
-    {
         this.manager = manager;
     }
 
@@ -21,6 +17,8 @@ public class CurlingGame : Game
         if(!state.IsWaitingForNext()) {
             return;
         }
+
+        state.SetWaitingForNext(false);
 
         if(state.GetRemainingTurns == 0)
         {
@@ -42,7 +40,7 @@ public class CurlingGame : Game
         state.AddStone(resultingStone);
         for(int i = 0; i < impactedStones.Capacity; i++)
         {
-            state.ChangeStone(impactedStones.ElementAt(i), newPositions.ElementAt(i));
+            state.ChangeStone(impactedStones[i], newPositions[i]);
         }
             
         state.SwitchActivePlayer();
@@ -60,23 +58,25 @@ public class CurlingGame : Game
 
     public void StartGame()
     {
+        manager.OnGameStarted();
         state.SetWaitingForNext(true);
         PlayTurn();
     }
     
     public void EndGame()
     {
-
+        manager.OnGameEnded();
     }
     
     public void EndTurn()
     {
-
+        (int score, int scorer) = ScoreCalculator.ComputeScore(state.GetStones());
+        manager.ShowScore(score, scorer);
     }
 
     public void EndThrow()
     {
-
+        manager.AllowNext();
     }
 
     public void MarkReadyForThrow() {
