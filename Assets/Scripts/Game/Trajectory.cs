@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Trajectory : MonoBehaviour
 {
-    private float THRESHOLD = 1f;
+    private float BEZIER_DISTANCE_THRESHOLD = 1f;
     private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 0.5f;
     private int NUMBER_OF_POINT  = 20;
@@ -13,9 +13,10 @@ public class Trajectory : MonoBehaviour
     public float distanceMultiplierThrow = 20f;
     public float distanceMultiplierCollision = 5f;
     public float curveMultiplier = 0.75f;
-    Vector3[] points = new Vector3[4];
 
-    List<Vector3[]> globalTraj = new List<Vector3[]>;
+    Vector3[] points = new Vector3[4];
+ 
+    List<Vector3[]> globalTraj = new List<Vector3[]>();
 
 
     Queue<Vector3> samplePoints = new Queue<Vector3>();
@@ -31,6 +32,12 @@ public class Trajectory : MonoBehaviour
         {
             points[i] = position;
         }
+        points = new Vector3[4];
+        globalTraj = new List<Vector3[]>;
+        samplePoints = new Queue<Vector3>();
+        isComputed = false;
+        finalPosition = null;
+
     }
 
     // Start is called before the first frame update
@@ -83,7 +90,7 @@ public class Trajectory : MonoBehaviour
     }
 
     //main method, used to calculate the trajectory
-    public void CalculateTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
+    public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
         //stops the stone if it goes too slow
         if (speed.magnitude < SPEED_THRESHOLD){
             points[0] = position;
@@ -120,15 +127,40 @@ public class Trajectory : MonoBehaviour
         goal = position;
     }
 
+    //goes to target in a straight line
+    public void setTrajWithTarget(Vector3 target, Vector3 position){
+        if(Vector3.Distance(target, position) < ATTAINED_THERSHOLD){
+            return;
+        }
+            points[0] = position;
+            points[1] = target;
+            points[2] = target;
+            points[3] = target;
+
+         //keep a history of the trajectory
+        globalTraj.Add(points);
+
+        isComputed = true;
+        //to optimize, only take a few of the points of the bézier curve
+        takeSamplePoints();
+        goal = position;
+
+    }
+
+    public void increaseCurl(Vector3 sweepingSpeed, Vector3 sweepingPosition){
+        
+    }
+
     private void takeSamplePoints(){
         Vector3 nextPoint = Vector3.zero;
         for(float i = 0f; i < 1; i+= Time.deltaTime){
-            if(Vector3.Distance(nextPoint, BezierCurve(i)) > THRESHOLD){
+            if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
                 //showPoint(BezierCurve(i), Color.green);
             }
         }
+        //add final point
         samplePoints.Enqueue(points[3]);
     }
     // displays a sphere at a certain point, helps with debugging

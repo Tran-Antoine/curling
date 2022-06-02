@@ -45,6 +45,7 @@ public class Stone : AgentBehaviour
         }      
     }
 
+    //TODO add rotation
     public override Steering GetSteering(){
         Steering steering = new Steering();
 
@@ -54,9 +55,9 @@ public class Stone : AgentBehaviour
 
     private Vector3 direction(){
 
-        //test stone
+        //test stone throw
         if(!traj.isComputed && Time.time > 0 && rigidBody.position.x < 8f){
-            setTraj(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f, true);
+            throwStone(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f, true);
             return Vector3.zero;
         }
         else{
@@ -69,6 +70,26 @@ public class Stone : AgentBehaviour
         return obj.gameObject.CompareTag(tag);
     }
 
+    public void throwStone(Vector3 velocity, Vector3 start, float angMom){
+        gameObject.GetComponent<Collider>().enabled = true;
+        traj.resetTraj(Rigidbody.position);
+        traj.setTraj(velocity, start, angMom, true);
+    }
+
+    //returns the x coordinate of the throw => idea : show it on screen
+    public float showThrowDistance(){
+        return traj.finalPosition.x;
+    }
+
+    public void sweep(Vector3 speed, Vector3 direction){
+        traj.increaseCurl(speed, direction);
+    }
+
+    public void impactStone(Vector3 velocity, Vector3 start, float angMom){
+        gameObject.GetComponent<Collider>().enabled = true;
+        traj.setTraj(velocity, start, angMom, false);
+    }
+
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
             Stone stone2 = other.gameObject.GetComponent<Stone>();
@@ -76,8 +97,6 @@ public class Stone : AgentBehaviour
                 wasCollided = false;
                 return;
             }
-            /*resetTraj(getPosition());
-            stone2.resetTraj(stone2.getPosition());*/
             collideWith(stone2);
         }
         if(comp(other, "Wall")){
@@ -85,12 +104,8 @@ public class Stone : AgentBehaviour
         }
     }
 
-    public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
-        traj.CalculateTraj(speed, position, angularVelocity, isThrow);
-    }
-
     public void stopStone(Vector3 position){
-        traj.resetTraj(position);
+        traj.setTrajWithTarget(position, position);
     }
 
     public Vector3 getPosition(){
@@ -99,6 +114,12 @@ public class Stone : AgentBehaviour
 
     public Vector3 getDirection(){
         return rigidBody.velocity != null ? rigidBody.velocity : Vector3.zero;
+    }
+
+    //returns in a straight line to start. Collisions are disabled  
+    public void returnToStart(Vector3 start){
+        gameObject.GetComponent<Collider>().enabled = false;
+        traj.setTrajWithTarget(start, rigidBody.position);
     }
 
     private void collideWith(Stone s2){
@@ -129,7 +150,7 @@ public class Stone : AgentBehaviour
         //avoid computation by both side
         s2.wasCollided = true;
 
-        setTraj(V2, rigidBody.position, 0, false);
-        s2.setTraj(V1, s2.getPosition(), 0, false);
+        impactStone(V2, rigidBody.position, 0, false);
+        s2.impactStone(V1, s2.getPosition(), 0, false);
     }
 }
