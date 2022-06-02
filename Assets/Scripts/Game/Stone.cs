@@ -13,7 +13,8 @@ public class Stone : AgentBehaviour
 
     private float time = 0f;
 
-    private float drag = 0.1f;
+    private const float drag = 0.1f;
+
 
     private GameObject stone;
 
