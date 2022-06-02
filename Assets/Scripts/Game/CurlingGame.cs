@@ -20,9 +20,9 @@ public class CurlingGame : Game
 
         state.SetWaitingForNext(false);
 
-        if(state.GetRemainingTurns == 0)
+        if(state.GetRemainingTurns() == 0)
         {
-            OnGameEnded();
+            manager.OnGameEnded();
             return;
         }
     }
@@ -30,7 +30,7 @@ public class CurlingGame : Game
     public void PlayThrow(Trajectory traj)
     {
 
-        state.SetWaitingForNext(false);
+        /*state.SetWaitingForNext(false);
         int activePlayer = state.GetActivePlayer();
 
         StaticStone resultingStone = (...); // some code that depends on traj
@@ -48,7 +48,7 @@ public class CurlingGame : Game
 
         if(state.IsNewTurnStarting()) {
             EndTurn();
-        }
+        }*/
     }
 
     public bool ExpectsThrow()

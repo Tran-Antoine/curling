@@ -7,7 +7,6 @@ public class Trajectory : MonoBehaviour
     private float BEZIER_DISTANCE_THRESHOLD = 1f;
     private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 0.5f;
-    private int NUMBER_OF_POINT  = 20;
 
 
     public float distanceMultiplierThrow = 20f;
@@ -23,8 +22,7 @@ public class Trajectory : MonoBehaviour
 
     public bool isComputed = false;
 
-    private Vector3 finalPosition = null;
-
+    private Vector3 finalPosition = Vector3.zero;
     
     //to reset the trajectory
     public void resetTraj(Vector3 position){
@@ -33,10 +31,10 @@ public class Trajectory : MonoBehaviour
             points[i] = position;
         }
         points = new Vector3[4];
-        globalTraj = new List<Vector3[]>;
+        globalTraj = new List<Vector3[]>();
         samplePoints = new Queue<Vector3>();
         isComputed = false;
-        finalPosition = null;
+        finalPosition = Vector3.zero;
 
     }
 
@@ -104,7 +102,7 @@ public class Trajectory : MonoBehaviour
             return;
         }
         else{
-            finalPosition = null;
+            finalPosition = Vector3.zero;
         }
         
         //start of the curve
@@ -171,8 +169,8 @@ public class Trajectory : MonoBehaviour
         sphereRenderer1.material.SetColor("_Color", color);
     }
 
-    //returns the final position. Can be null if it is not yet computed
+    //returns the final position. Can be zero if it is not yet computed
     public Vector3 getFinalPosition(){
-        return finalPosition
+        return finalPosition;
     }
 }
