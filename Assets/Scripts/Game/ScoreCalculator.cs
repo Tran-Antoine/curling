@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using System.Numerics;
+using UnityEngine;
+using UnityEngine.UI;
 
 class ScoreCalculator {
 
@@ -28,9 +29,9 @@ class ScoreCalculator {
 
     private static int CompareByDistance(StaticStone s1, StaticStone s2)
     {
-        float d1 = Vector3.DistanceSquared(GameState.CENTER, s1.GetPosition());
-        float d2 = Vector3.DistanceSquared(GameState.CENTER, s2.GetPosition());
+        float d1 = Vector3.Distance(GameState.CENTER, s1.GetPosition());
+        float d2 = Vector3.Distance(GameState.CENTER, s2.GetPosition());
 
-        return d1 - d2;
+        return d1 - d2 < 0 ? -1 : 1;
     }
 }

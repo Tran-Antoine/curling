@@ -6,7 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
 
-    private static const int N_TURNS = 6;
+    private const int N_TURNS = 6;
 
     private IOManager ioManager;
 
@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     void CreateNewGame()
     {
-        CurlingGame game = new CurlingGame(N_TURNS);
+        CurlingGame game = new CurlingGame(N_TURNS, ioManager);
         ioManager.SetGame(game);
     }
 }

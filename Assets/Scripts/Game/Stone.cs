@@ -50,7 +50,7 @@ public class Stone : AgentBehaviour
     public override Steering GetSteering(){
         Steering steering = new Steering();
 
-        steering.linear = direction() * cellulo.maxAccel - DRAG * time*time;
+        steering.linear = direction() * (cellulo.maxAccel - drag * time*time);
         return steering;
     }
 
@@ -58,11 +58,11 @@ public class Stone : AgentBehaviour
 
         //test stone throw
         if(!traj.isComputed && Time.time > 0 && rigidBody.position.x < 8f){
-            throwStone(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f, true);
+            throwStone(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f);
             return Vector3.zero;
         }
         else{
-            return traj.NextDirection(time, rigidBody.position);
+            return traj.NextDirection(rigidBody.position);
         }
     }
 
@@ -73,13 +73,13 @@ public class Stone : AgentBehaviour
 
     public void throwStone(Vector3 velocity, Vector3 start, float angMom){
         gameObject.GetComponent<Collider>().enabled = true;
-        traj.resetTraj(Rigidbody.position);
+        traj.resetTraj(rigidBody.position);
         traj.setTraj(velocity, start, angMom, true);
     }
 
     //returns the x coordinate of the throw => idea : show it on screen
     public float showThrowDistance(){
-        return traj.finalPosition.x;
+        return traj.getFinalPosition().x;
     }
 
     public void sweep(Vector3 speed, Vector3 direction){
@@ -151,7 +151,7 @@ public class Stone : AgentBehaviour
         //avoid computation by both side
         s2.wasCollided = true;
 
-        impactStone(V2, rigidBody.position, 0, false);
-        s2.impactStone(V1, s2.getPosition(), 0, false);
+        impactStone(V2, rigidBody.position, 0);
+        s2.impactStone(V1, s2.getPosition(), 0);
     }
 }
