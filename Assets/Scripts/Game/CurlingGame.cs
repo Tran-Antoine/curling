@@ -27,28 +27,19 @@ public class CurlingGame : Game
         }
     }
 
-    public void PlayThrow(Trajectory traj)
+    public void PlayThrow(StaticStone stone)
     {
 
-        /*state.SetWaitingForNext(false);
+        state.SetWaitingForNext(false);
         int activePlayer = state.GetActivePlayer();
-
-        StaticStone resultingStone = (...); // some code that depends on traj
-        List<int> impactedStones = (...);
-        List<Vector3> newPositions = (...);
-
-        state.AddStone(resultingStone);
-        for(int i = 0; i < impactedStones.Capacity; i++)
-        {
-            state.ChangeStone(impactedStones[i], newPositions[i]);
-        }
+        stone.SetPlayer(activePlayer);
             
         state.SwitchActivePlayer();
         EndThrow();
 
         if(state.IsNewTurnStarting()) {
             EndTurn();
-        }*/
+        }
     }
 
     public bool ExpectsThrow()

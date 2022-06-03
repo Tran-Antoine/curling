@@ -13,6 +13,8 @@ public class GameState
     private int remainingTurns; // number of turns remaining 
     private int activePlayer; // 0 => first player, 1 => second player
 
+    private int nStoneThrown = 0;
+
     private List<StaticStone> stones;
 
     public GameState(int turns)
@@ -64,6 +66,7 @@ public class GameState
     public void AddStone(StaticStone stone)
     {
         stones.Add(stone);
+        stone.SetId(nStoneThrown++);
     }
 
     public void ImpactStone(int id, Vector3 newPosition)
@@ -77,4 +80,6 @@ public class GameState
             }
         }
     }
+
+    
 }
