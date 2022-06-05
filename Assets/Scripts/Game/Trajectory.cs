@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Trajectory : MonoBehaviour
 {
+
+    public IOManager ioManager; // TODO: set the value
+
     private float BEZIER_DISTANCE_THRESHOLD = 1f;
     private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 0.5f;
@@ -99,6 +102,7 @@ public class Trajectory : MonoBehaviour
             finalPosition = position;
             isComputed = false;
 
+            ioManager.OnThrowSimulationEnded();
             return;
         }
         else{

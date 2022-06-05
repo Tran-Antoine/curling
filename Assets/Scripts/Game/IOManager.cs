@@ -4,7 +4,7 @@ public class IOManager
 
     private Game game;
 
-    private Trajectory pendingData;
+    private StaticStone pendingData;
 
     public void SetGame(Game game) 
     {
@@ -43,14 +43,14 @@ public class IOManager
 
     /// Triggered by Unity
     /// TODO: Connecter l'évènement "Le robot passe la ligne de départ et donc est considéré comme lancé" à cette méthode (dans le code lié à Unity probablement)
-    public void OnStoneThrown(Trajectory traj) 
+    public void OnStoneThrown(SimulationStone stone) 
     {
         if(game == null) return;
 
         if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
         {
-            this.pendingData = traj;
-            // TODO: Lancer la simulation visuelle et robotique
+            this.pendingData = stone;
+            stone.ThrowStoneFromCurrentVelocities();
         }
     }
 
