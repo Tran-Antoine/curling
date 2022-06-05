@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 //using System.Windows.Input;
 
-public class CameraManager : MonoBehaviour
+public class CameraMovement : MonoBehaviour
 {
 
     Vector3 position;
@@ -18,10 +19,22 @@ public class CameraManager : MonoBehaviour
     float zmvt;
 
 
+    private static Vector3 initialPosition;
+    private Quaternion initialRotation;
+
+    public Button reset;
+
+    void Awake(){
+        reset.onClick.AddListener(resetView);
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
         position = new Vector3(0,0,0);   
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
     }
 
     // Update is called once per frame
@@ -46,6 +59,13 @@ public class CameraManager : MonoBehaviour
 
 
         //transform.position += direction;
+        
+    }
+
+    void resetView(){
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+
         
     }
 }
