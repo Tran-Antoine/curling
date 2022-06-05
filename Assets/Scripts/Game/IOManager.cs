@@ -4,7 +4,7 @@ public class IOManager
 
     private Game game;
 
-    private StaticStone pendingData;
+    private SimulationStone pendingData;
 
     public void SetGame(Game game) 
     {
@@ -60,7 +60,7 @@ public class IOManager
     {
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
 
-        game.PlayThrow(pendingData);
+        game.PlayThrow(pendingData.GetLogicStone());
         pendingData = null;
 
         // TODO: Peut-être afficher un message genre "Bon lancer !" ou un truc du style ?
