@@ -3,7 +3,7 @@ public interface Game
 
     void PlayTurn();
 
-    void PlayThrow(Trajectory traj);
+    void PlayThrow(StaticStone stone);
 
     bool ExpectsThrow();
 

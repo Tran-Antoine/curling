@@ -23,6 +23,12 @@ public class SimulationStone : AgentBehaviour
     private CelluloAgent cellulo;
     private Rigidbody rigidBody;
 
+    public StaticStone GetLogicStone()
+    { 
+        return logicStone; 
+    }
+
+
     void Start()
     {
         
@@ -79,7 +85,7 @@ public class SimulationStone : AgentBehaviour
 
     public void ThrowStoneFromCurrentVelocities()
     {
-        ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity);
+        ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
         gameObject.GetComponent<Collider>().enabled = true;
