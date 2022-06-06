@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menu.unity
     guid: 059f745416177a346a9c318d9223b008
   - enabled: 1
-    path: Assets/Scenes/GhostSheepGame.unity
-    guid: 14c46397e3635f7468e1e5a0c784a583
+    path: Assets/Scenes/Curling.unity
+    guid: d99a7fdf42684f740a875bf5a3565828
   m_configObjects: {}

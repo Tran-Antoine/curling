@@ -1,10 +1,27 @@
+using UnityEngine;
+using TMPro;
+using System.Collections;
+using UnityEngine.UI;
+using System.Collections.Generic;
+using System;
 /// Bridge that connects the game logic and the unity simulation
-public class IOManager 
+public class IOManager : MonoBehaviour
 {
 
     private Game game;
 
     private Trajectory pendingData;
+
+
+    public TextMeshProUGUI scoreTextP0;
+    public TextMeshProUGUI scoreTextP1;
+    public Button continueGame;
+    public GameObject gameOverBox;
+    public int turns;
+    public ToggleGroupTurns toggleGroupOptions;
+    public TextMeshProUGUI startGameText;
+    public TextMeshProUGUI niceThrow;
+    public List<string> messages = new List<string>(){"Nice job!", "Well done!", "Wow!", "Great!", "Impressive!", "Keep it up!", "Awesome!", "Amazing!", "Perfect!", "Phenomenal!", "Meh...", "Better luck next time"};
 
     public void SetGame(Game game) 
     {
@@ -12,16 +29,16 @@ public class IOManager
     }
 
     /// Triggered by Unity
-    /// TODO: Connecter l'évènement du clic du bouton "Start" à cette méthode (sur Unity)
     public void onStartClicked() 
-    {
+    {   toggleGroupOptions.Choose();
+        while(toggleGroupOptions.turns == 0){}
+        SetGame(new CurlingGame(toggleGroupOptions.turns, this));
         if(game == null) return;
 
         game.StartGame();
     }
 
     /// Triggered by Unity
-    /// TODO: Connecter l'évènement du clic du bouton "Continuer le jeu après un lancer" à cette méthode (sur Unity)
     public void onNextClicked() 
     {
         if(game == null) return;
@@ -29,16 +46,21 @@ public class IOManager
         game.MarkReadyForThrow();
     }
 
+    private IEnumerator WaitForSec(TextMeshProUGUI text){
+            yield return new WaitForSeconds(1);
+            text.gameObject.SetActive(false);
+    }
     /// Triggered by Game
     public void OnGameStarted() 
-    {
-        // TODO: Soit ne rien faire, soit éventuellement afficher un message temporaire "La partie commence" ou quoi
+    {   
+        startGameText.gameObject.SetActive(true);
+        StartCoroutine(WaitForSec(startGameText));
     }
 
     /// Triggered by Game
     public void OnGameEnded() 
-    {
-        // TODO: Afficher un message du style "Fin de la partie (ou fin de la manche je sais pas encore)" à l'écran
+    {   
+        gameOverBox.SetActive(true);
     }
 
     /// Triggered by Unity
@@ -55,27 +77,35 @@ public class IOManager
     }
 
     /// Triggered by Unity / The Simulation manager
-    /// TODO: Connecter l'évènement "La simulation du lancer est terminée" à cette méthode 
+    /// TODO: Connecter l'évènement "La simulation du lancer est terminée" à cette méthode
     public void OnThrowSimulationEnded()
     {
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
 
         game.PlayThrow(pendingData);
         pendingData = null;
-
-        // TODO: Peut-être afficher un message genre "Bon lancer !" ou un truc du style ?
+        
+        System.Random rnd = new System.Random();
+        int num = rnd.Next(0, messages.Count);
+        niceThrow.text = messages[num];
+        niceThrow.gameObject.SetActive(true);
+        StartCoroutine(WaitForSec(niceThrow));
     }
 
     /// Triggered by Game
     public void ShowScore(int score, int scorer)
     {
-        // TODO: Actualiser le score en haut de l'interface sur Unity
+        if (scorer == 0) {
+            scoreTextP0.text = score.ToString();
+        } else {
+            scoreTextP1.text = score.ToString();
+        }
     }
 
     /// Triggered by Game
     public void AllowNext()
     {
-        // TODO: Réactiver le bouton "Continuer le jeu après un lancer"
+        continueGame.gameObject.SetActive(true);
     }
 
 }
