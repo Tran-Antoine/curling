@@ -11,11 +11,13 @@ public class SimulationStone : AgentBehaviour
     public bool wasCollided = false;
     // Start is called before the first frame update
 
-    private Trajectory traj = new Trajectory();
+    private Trajectory traj;
 
     private float time = 0f;
 
     private const float drag = 0.1f;
+
+    public IOManager manager;
 
 
     private GameObject stone;
@@ -34,16 +36,22 @@ public class SimulationStone : AgentBehaviour
         
         this.logicStone = new StaticStone(Vector3.zero);
         stone = gameObject;
+        
         stone.tag = "Stone";
-
+        Debug.Log("Stoneeee" + stone);
         if(cellulo == null){
-            cellulo = stone.GetComponent<CelluloAgent>();
+            cellulo = stone.GetComponentInParent<CelluloAgent>();
         }
+
+        Debug.Log("cellulo :" + cellulo);
         if(rigidBody == null){
             rigidBody = stone.GetComponent<Rigidbody>();
         }
+
+        Debug.Log("rigidBody :" + rigidBody);
+
         if(traj == null){
-            traj = new Trajectory();
+            traj = new Trajectory(manager);
         }
 
     }
@@ -69,13 +77,17 @@ public class SimulationStone : AgentBehaviour
     private Vector3 direction(){
 
         //test stone throw
+        /**
         if(!traj.isComputed && Time.time > 0 && rigidBody.position.x < 8f){
-            ThrowStone(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f);
+            ThrowStone(new Vector3(0.9f, 0f, 0.25f), rigidBody.position, -0.40f);
             return Vector3.zero;
         }
         else{
             return traj.NextDirection(rigidBody.position);
         }
+        */
+
+        return traj.NextDirection(rigidBody.position);
     }
 
     bool comp(Collision obj, string tag)
@@ -88,7 +100,7 @@ public class SimulationStone : AgentBehaviour
         ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
-        gameObject.GetComponent<Collider>().enabled = true;
+        //gameObject.GetComponent<Collider>().enabled = true;
         traj.resetTraj(rigidBody.position);
         traj.setTraj(velocity, start, angMom, true);
     }
@@ -103,7 +115,7 @@ public class SimulationStone : AgentBehaviour
     }
 
     public void impactStone(Vector3 velocity, Vector3 start, float angMom){
-        gameObject.GetComponent<Collider>().enabled = true;
+        //gameObject.GetComponent<Collider>().enabled = true;
         traj.setTraj(velocity, start, angMom, false);
     }
 
@@ -123,6 +135,7 @@ public class SimulationStone : AgentBehaviour
 
     public void stopStone(Vector3 position){
         traj.setTrajWithTarget(position, position);
+        manager.OnThrowSimulationEnded();
     }
 
     public Vector3 getPosition(){
@@ -135,7 +148,7 @@ public class SimulationStone : AgentBehaviour
 
     //returns in a straight line to start. Collisions are disabled  
     public void returnToStart(Vector3 start){
-        gameObject.GetComponent<Collider>().enabled = false;
+        //gameObject.GetComponent<Collider>().enabled = false;
         traj.setTrajWithTarget(start, rigidBody.position);
     }
 

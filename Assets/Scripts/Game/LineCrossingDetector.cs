@@ -1,45 +1,30 @@
 using UnityEngine;
 using System;
 
-public class LineCrossingDetecter : AgentBehaviour // Agent or Mono ?
+public class LineCrossingDetector : AgentBehaviour // Agent or Mono ?
 {
 
-    private const float LINE_POS_X = 0; // TODO: set the right value
-    private const float THRESHOLD = 0; // TODO: set the right value (to be tested with the robots)
-    public IOManager ioManager; // TODO: instanciate this somewhere
-
-    private bool liesWithinRange = false;
-    private bool liesBeforeLine  = false;
-
+    private const float LINE_POS_X = 2.7f; // TODO: set the right value
+    private const float THRESHOLD = 0.2f; // TODO: set the right value (to be tested with the robots)
+    public IOManager ioManager; // TODO: instanciate this somewhere    
+    private float prevX;
+    private float currX;
     void Start()
-    {
-
+    {   
+        currX = gameObject.GetComponent<Rigidbody>().transform.localPosition.x;
     }
 
     void Update()
     {
         
-        float posX = gameObject.GetComponent<Rigidbody>().position.x;
+        float posX = gameObject.GetComponent<Rigidbody>().transform.localPosition.x;
+        prevX = currX;
+        currX = posX;
 
-        if(posX < LINE_POS_X - 2*THRESHOLD)
-        {
-            liesBeforeLine = true;
-        }
-
-        if(posX > LINE_POS_X + 2*THRESHOLD)
-        {
-            liesBeforeLine = false;
-        }
-
-
-        bool within = IsWithin(posX);
-
-        if(!liesWithinRange && within && liesBeforeLine)
-        {
+        if (prevX <= LINE_POS_X && currX >= LINE_POS_X){
+            Debug.Log("if onstonethrown appelé");
             ioManager.OnStoneThrown(gameObject.GetComponent<SimulationStone>());
         }
-
-        liesWithinRange = within;
     }
 
 

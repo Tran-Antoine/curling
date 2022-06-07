@@ -331,6 +331,9 @@ GameObject:
   - component: {fileID: 6553765980520163236}
   - component: {fileID: 4804574212970481870}
   - component: {fileID: 2364173123880399170}
+  - component: {fileID: 8784870014489734678}
+  - component: {fileID: 1318346121297525248}
+  - component: {fileID: 2883353272824614260}
   m_Layer: 0
   m_Name: CelluloAgent
   m_TagString: Untagged
@@ -404,6 +407,69 @@ MonoBehaviour:
   simulatedTouch: 740000007200000066000000760000006200000068000000
   ledColorWhenTouched: {r: 1, g: 1, b: 1, a: 1}
   initialColor: {r: 0, g: 0, b: 0, a: 0}
+  deleted: 0
+--- !u!114 &8784870014489734678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3040563576298773591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54044ef2fc3a64b3d91eb91b16b2cd18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  priority: 1
+  enableRaycast: 0
+  distanceRaycast: 5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  wasCollided: 0
+  manager: {fileID: 0}
+--- !u!114 &1318346121297525248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3040563576298773591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f70107ff121f354aa845ec49d4faa5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  priority: 1
+  enableRaycast: 0
+  distanceRaycast: 5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  ioManager: {fileID: 0}
+--- !u!114 &2883353272824614260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3040563576298773591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9857f6e826dc404b8e7ebdf31e826f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  priority: 1
+  enableRaycast: 0
+  distanceRaycast: 5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  inputKeyboard: 0
+  number: 0
 --- !u!1 &3047742467834392985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1312,3 +1378,17 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 532591105809680800, guid: d589205b18d4c7d46bfb15486f3d4bfd, type: 3}
+--- !u!114 &4985606232952943410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2396450906556818873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9023df9c7e05e3d4f9cf1f83790a0962, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blendWeight: 0
+  byPriority: 0

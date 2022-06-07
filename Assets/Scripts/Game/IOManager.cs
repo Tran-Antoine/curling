@@ -30,7 +30,8 @@ public class IOManager : MonoBehaviour
 
     /// Triggered by Unity
     public void onStartClicked() 
-    {   toggleGroupOptions.Choose();
+    {   
+        toggleGroupOptions.Choose();
         while(toggleGroupOptions.turns == 0){}
         SetGame(new CurlingGame(toggleGroupOptions.turns, this));
         if(game == null) return;
@@ -68,11 +69,14 @@ public class IOManager : MonoBehaviour
     public void OnStoneThrown(SimulationStone stone) 
     {
         if(game == null) return;
+        
 
-        if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
+        //if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
         {
+            Debug.Log("Expect Throw");
             this.pendingData = stone;
-            stone.ThrowStoneFromCurrentVelocities();
+            //stone.ThrowStoneFromCurrentVelocities();
+            stone.ThrowStone(new Vector3(0.7f, 0f, 0f), stone.getPosition(), -0.40f);
         }
     }
 
@@ -80,6 +84,8 @@ public class IOManager : MonoBehaviour
     /// TODO: Connecter l'évènement "La simulation du lancer est terminée" à cette méthode
     public void OnThrowSimulationEnded()
     {
+        Debug.Log("OnThrowSimulationEnded ! ");
+        Debug.Log("Pending data : " + pendingData);
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
 
         game.PlayThrow(pendingData.GetLogicStone());

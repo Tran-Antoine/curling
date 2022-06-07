@@ -27,6 +27,11 @@ public class Trajectory : MonoBehaviour
 
     private Vector3 finalPosition = Vector3.zero;
     
+
+    public Trajectory(IOManager manager){
+        this.ioManager = manager;
+    }
+
     //to reset the trajectory
     public void resetTraj(Vector3 position){
         for (int i = 0; i < 4; i++)
@@ -44,12 +49,11 @@ public class Trajectory : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
-    {        
+    {
     }
 
     

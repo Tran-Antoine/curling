@@ -6,6 +6,11 @@ class ScoreCalculator {
 
     public static (int, int) ComputeScore(List<StaticStone> stones)
     {
+
+        if (stones.Count == 0){
+            Debug.Log("caillou");
+            return(0, 0);
+        }
         stones.Sort(CompareByDistance);
 
         int scoringPlayer = stones[0].GetPlayer();
