@@ -65,7 +65,5 @@ public class CameraMovement : MonoBehaviour
     void resetView(){
         transform.position = initialPosition;
         transform.rotation = initialRotation;
-
-        
     }
 }
