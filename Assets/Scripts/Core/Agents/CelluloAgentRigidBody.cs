@@ -9,7 +9,9 @@ public class CelluloAgentRigidBody : CelluloAgent
 {
     private Rigidbody _rigidBody;
 
+    public Boolean deleted = false;
     protected override void Awake()
+
     {
         base.Awake();
         _rigidBody = GetComponent<Rigidbody>();
@@ -17,34 +19,60 @@ public class CelluloAgentRigidBody : CelluloAgent
 
     protected override void FixedUpdate()
     {
-        base.FixedUpdate();
-        if (steering.linear.sqrMagnitude == 0.0f)
-            _rigidBody.velocity = Vector3.zero; 
-        else
-        {   //apply force only if we are not at the maximum speed
-            if(_rigidBody.velocity.sqrMagnitude<maxSpeed*maxSpeed)
-                _rigidBody.AddForce(Vector3.ClampMagnitude(steering.linear, maxAccel));
-            else //else break a bit
-            {
-                float brakeSpeed = _rigidBody.velocity.magnitude - maxSpeed;  // calculate the speed decrease
-            
-                Vector3 normalisedVelocity = _rigidBody.velocity.normalized;
-                Vector3 brakeVelocity = normalisedVelocity * maxAccel;  // make the brake Vector3 value
-                _rigidBody.AddForce(-brakeVelocity);  // apply opposing brake force
+            if (!deleted){
+            base.FixedUpdate();
+            if(stopMoving){
+                _rigidBody.velocity = Vector3.zero;
+                return;
+            }
+
+            //Linear  
+            if (steering.linear.sqrMagnitude == 0.0f)
+                _rigidBody.velocity = Vector3.zero; 
+            else
+            {   //apply force only if we are not at the maximum speed
+                if(_rigidBody.velocity.sqrMagnitude<maxSpeed*maxSpeed)
+                    _rigidBody.AddForce(Vector3.ClampMagnitude(steering.linear, maxAccel));
+                else //else break a bit
+                {
+                    Vector3 normalizedLinearVelocity = _rigidBody.velocity.normalized;
+                    Vector3 brake = normalizedLinearVelocity * maxAccel;  // make the brake Vector3 value
+                    _rigidBody.AddForce(-brake);  // apply opposing brake force
+                }
+            }
+
+            //Angular 
+            if(steering.angular == 0.0f)
+                _rigidBody.angularVelocity = Vector3.zero;
+            else{
+
+                if(_rigidBody.angularVelocity.y<maxAngularSpeed){
+                    _rigidBody.AddTorque(Vector3.ClampMagnitude(steering.angular*Vector3.up, maxAngularAccel));
+                }
+                else{
+                    Vector3 normalizedAngularVel = _rigidBody.angularVelocity.normalized;
+                    Vector3 brake = normalizedAngularVel*maxAngularAccel;
+                    _rigidBody.AddTorque(-brake);
+                }
             }
         }
+        
+
     }
     public override void LateUpdate()
-    {
-
-        rotation += steering.angular * Time.deltaTime;
-        rotation = rotation > maxRotation ? maxRotation : rotation;
-        
-        rotation = steering.angular == 0.0f ? 0.0f : rotation;
-        velocity = transform.parent.InverseTransformDirection(_rigidBody.velocity);
-
+    {   
+        if (!deleted){
+            rotation = _rigidBody.angularVelocity.y;
+            velocity = transform.parent.InverseTransformDirection(_rigidBody.velocity);
+        }
     }
 
-    
+    private static Color p1 = new Color(66/256f, 135/256f, 60/256f);
+    public void Delete(){
+        deleted = true;
+    }
+    /**void OnMouseDown(){
+        this.SetVisualEffect(VisualEffect.VisualEffectConstAll, p1, 1);
+    }*/
 
 }
