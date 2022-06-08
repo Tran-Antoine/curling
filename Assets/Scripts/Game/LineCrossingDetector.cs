@@ -23,6 +23,10 @@ public class LineCrossingDetector : AgentBehaviour // Agent or Mono ?
         if (prevX <= LINE_POS_X && currX >= LINE_POS_X){
             ioManager.OnStoneThrown(gameObject.GetComponent<SimulationStone>());
         }
+
+        if (prevX >= LINE_POS_X && currX <= LINE_POS_X){
+            gameObject.GetComponent<SimulationStone>().ResetStone();
+        }
     }
 
 

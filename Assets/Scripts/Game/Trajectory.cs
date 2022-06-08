@@ -24,8 +24,6 @@ public class Trajectory
     Queue<Vector3> samplePoints = new Queue<Vector3>();
 
     public bool isComputed = false;
-
-    private Vector3 finalPosition = Vector3.zero;
     
     private SimulationStone stone;
 
@@ -44,8 +42,6 @@ public class Trajectory
         globalTraj = new List<Vector3[]>();
         samplePoints = new Queue<Vector3>();
         isComputed = false;
-        finalPosition = Vector3.zero;
-
     }
 
     // Start is called before the first frame update
@@ -75,35 +71,29 @@ public class Trajectory
     public Vector3 NextPosition(Vector3 currentPosition){
         if(samplePoints.Count == 0){
                 isComputed = false;
-                justStopped = true;
+                reached = true;
                 resetTraj(currentPosition);
         }
         if(isComputed){
             if(Vector3.Distance(currentPosition, samplePoints.Peek()) < ATTAINED_THERSHOLD){
                 return samplePoints.Dequeue();
-            }
-            return samplePoints.Peek();
+            } else return samplePoints.Peek();
         }
         return currentPosition;
     }
 
     Vector3 goal = Vector3.zero;
-    private bool justStopped = false;
+    private bool reached = false;
     
     //computes the next direction according to the current position
     public Vector3 NextDirection(Vector3 currentPosition){
-        
         if(isComputed){
             goal = NextPosition(currentPosition);
-            //Debug.Log("next position (goal): " + goal);
             return goal - currentPosition;
-        } else if (justStopped){
-            ioManager.OnThrowSimulationEnded();
-            justStopped = false;
-            stone.SetThrown(false);
-            //Debug.Log("Simulation stopped!");
+        } else if (reached){
+            reached = false;
+            stone.OnReached();
         }
-        //Debug.Log("return (0,0,0)");
         return Vector3.zero;
         
     }
@@ -112,24 +102,8 @@ public class Trajectory
 
     //main method, used to calculate the trajectory
     public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
-        //stops the stone if it goes too slow
-        /**if (speed.magnitude < SPEED_THRESHOLD){
-            points[0] = position;
-            points[1] = position;
-            points[2] = position;
-            points[3] = position;
 
-            finalPosition = position;
-            isComputed = false;
-
-            ioManager.OnThrowSimulationEnded();
-            return;
-        }
-        else{
-            finalPosition = Vector3.zero;
-        }*/
-        
-        finalPosition = Vector3.zero;
+        resetTraj(position);
 
         //start of the curve
         points[0] = position;
@@ -196,8 +170,9 @@ public class Trajectory
         sphereRenderer1.material.SetColor("_Color", color);
     }
 
-    //returns the final position. Can be zero if it is not yet computed
-    public Vector3 getFinalPosition(){
-        return finalPosition;
+    public void PrintTraj(){
+        Debug.Log($"{stone.cellulo} --- points : [0] = {points[0]}, [1] = {points[1]}, [2] = {points[2]}, [3] = {points[3]}");
     }
+
+   
 }
