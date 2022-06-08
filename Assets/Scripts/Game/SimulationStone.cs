@@ -107,7 +107,7 @@ public class SimulationStone : AgentBehaviour
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
         //gameObject.GetComponent<Collider>().enabled = true;
-        traj.resetTraj(rigidBody.position);
+        //traj.resetTraj(rigidBody.position);
         traj.setTraj(velocity, start, angMom, true);
         //traj.setTrajWithTarget(new Vector3(22.3f, -1.3f, 0f), rigidBody.position);
         isThrown = true;

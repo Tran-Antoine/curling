@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class Trajectory : MonoBehaviour
+public class Trajectory
 {
 
     public IOManager ioManager; // TODO: set the value
@@ -40,7 +40,7 @@ public class Trajectory : MonoBehaviour
         {
             points[i] = position;
         }
-        points = new Vector3[4];
+        //points = new Vector3[4];
         globalTraj = new List<Vector3[]>();
         samplePoints = new Queue<Vector3>();
         isComputed = false;
@@ -76,6 +76,7 @@ public class Trajectory : MonoBehaviour
         if(samplePoints.Count == 0){
                 isComputed = false;
                 justStopped = true;
+                resetTraj(currentPosition);
         }
         if(isComputed){
             if(Vector3.Distance(currentPosition, samplePoints.Peek()) < ATTAINED_THERSHOLD){

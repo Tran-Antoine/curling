@@ -7,7 +7,7 @@ public class GameState
 {
 
     private const int N_PLAYERS = 2;
-    public static Vector3 CENTER = new Vector3(0, 0, 0);
+    public static Vector3 CENTER = new Vector3(11.63f, 0, -4.95f);
     private bool waitingForNext;
     private int turns;
     private int remainingTurns; // number of turns remaining 
