@@ -12,4 +12,5 @@ public interface Game
     void EndTurn();
     void EndThrow();
     void MarkReadyForThrow();
+    void ExpectedWasThrown();
 }

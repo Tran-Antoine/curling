@@ -31,8 +31,8 @@ public class CelluloVisualisation : MonoBehaviour
 
     public static void MoveTo(CelluloAgent agent){
         CelluloAgent toMove = NextPlayer();
-        Destroy(agent.GetComponent<Rigidbody>());
-        agent.GetComponent<CelluloAgentRigidBody>().Delete();
+        //Destroy(agent.GetComponent<Rigidbody>());
+        //agent.GetComponent<CelluloAgentRigidBody>().Delete();
         toMove.SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, toMove.maxAccel);
     }
 

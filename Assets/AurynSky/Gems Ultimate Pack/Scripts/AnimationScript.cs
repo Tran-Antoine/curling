@@ -50,7 +50,7 @@ public class AnimationScript : MonoBehaviour {
 
     void OnMouseDown(){
         cellulo.SetVisualEffect(VisualEffect.VisualEffectConstAll, SELECTED_COLOR, 1);
-        DeleteBody();
+        //DeleteBody();
         CelluloVisualisation.MoveTo(cellulo);
         //Invoke("SetInvisible", 5);
     }

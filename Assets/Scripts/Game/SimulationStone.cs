@@ -8,21 +8,29 @@ public class SimulationStone : AgentBehaviour
 
     private StaticStone logicStone;
 
-    public bool wasCollided = false;
+    //public bool isThrown = false;
     // Start is called before the first frame update
 
-    private Trajectory traj = new Trajectory();
+    private Trajectory traj;
 
     private float time = 0f;
 
     private const float drag = 0.1f;
 
+    public IOManager manager;
+
 
     private GameObject stone;
 
-    private CelluloAgent cellulo;
+    public CelluloAgent cellulo;
     private Rigidbody rigidBody;
+    private bool first = true;
 
+    private bool thrown = false;
+
+    public void SetThrown(bool b){
+        thrown = b;
+    }
     public StaticStone GetLogicStone()
     { 
         return logicStone; 
@@ -34,16 +42,19 @@ public class SimulationStone : AgentBehaviour
         
         this.logicStone = new StaticStone(Vector3.zero);
         stone = gameObject;
+        
         stone.tag = "Stone";
 
         if(cellulo == null){
-            cellulo = stone.GetComponent<CelluloAgent>();
+            cellulo = stone.GetComponentInParent<CelluloAgent>();
         }
+
         if(rigidBody == null){
             rigidBody = stone.GetComponent<Rigidbody>();
         }
+
         if(traj == null){
-            traj = new Trajectory();
+            traj = new Trajectory(manager, this);
         }
 
     }
@@ -53,8 +64,7 @@ public class SimulationStone : AgentBehaviour
     {
         if(traj.isComputed){
             time += Time.deltaTime;
-        }
-
+        } 
         this.logicStone.SetPosition(rigidBody.position);    
     }
 
@@ -62,20 +72,12 @@ public class SimulationStone : AgentBehaviour
     public override Steering GetSteering(){
         Steering steering = new Steering();
 
-        steering.linear = direction() * (cellulo.maxAccel - drag * time*time);
+        steering.linear = direction() * Mathf.Max(cellulo.maxAccel - drag*time*time, 0);
         return steering;
     }
 
     private Vector3 direction(){
-
-        //test stone throw
-        if(!traj.isComputed && Time.time > 0 && rigidBody.position.x < 8f){
-            ThrowStone(new Vector3(0.85f, 0f, -0.25f), rigidBody.position, -0.40f);
-            return Vector3.zero;
-        }
-        else{
-            return traj.NextDirection(rigidBody.position);
-        }
+        return traj.NextDirection(rigidBody.position);
     }
 
     bool comp(Collision obj, string tag)
@@ -88,54 +90,43 @@ public class SimulationStone : AgentBehaviour
         ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
-        gameObject.GetComponent<Collider>().enabled = true;
-        traj.resetTraj(rigidBody.position);
+        time = 0f;
         traj.setTraj(velocity, start, angMom, true);
+        thrown = true;
     }
 
     //returns the x coordinate of the throw => idea : show it on screen
-    public float showThrowDistance(){
+    /**public float showThrowDistance(){
         return traj.getFinalPosition().x;
-    }
+    }*/
 
     public void sweep(Vector3 speed, Vector3 direction){
         traj.increaseCurl(speed, direction);
     }
 
-    public void impactStone(Vector3 velocity, Vector3 start, float angMom){
-        gameObject.GetComponent<Collider>().enabled = true;
-        traj.setTraj(velocity, start, angMom, false);
-    }
-
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
-            SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
-            if(wasCollided){
-                wasCollided = false;
-                return;
+           if (thrown){ 
+                Debug.Log("moi, caillou " + this + " est rentré dans : " + other);
+                SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
+                collideWith(stone2);
             }
-            collideWith(stone2);
         }
         if(comp(other, "Wall")){
-            stopStone(getPosition());
+            OnReached();
         }
-    }
-
-    public void stopStone(Vector3 position){
-        traj.setTrajWithTarget(position, position);
     }
 
     public Vector3 getPosition(){
         return rigidBody.position;
     }
 
-    public Vector3 getDirection(){
+    public Vector3 getSpeed(){
         return rigidBody.velocity != null ? rigidBody.velocity : Vector3.zero;
     }
 
     //returns in a straight line to start. Collisions are disabled  
     public void returnToStart(Vector3 start){
-        gameObject.GetComponent<Collider>().enabled = false;
         traj.setTrajWithTarget(start, rigidBody.position);
     }
 
@@ -143,31 +134,51 @@ public class SimulationStone : AgentBehaviour
         //Source : https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
 
         
-        float X1_x = rigidBody.position.x;
-        float X2_x = s2.getPosition().x;
-        float X1_z = rigidBody.position.z;
-        float X2_z = s2.getPosition().z;
-    
-        Vector3 direction = getDirection();
+
+            float X1_x = rigidBody.position.x;
+            float X2_x = s2.getPosition().x;
+            float X1_z = rigidBody.position.z;
+            float X2_z = s2.getPosition().z;
+
+            Vector3 speed = getSpeed();
+
+
+            traj.resetTraj(rigidBody.position);
+            s2.traj.resetTraj(s2.rigidBody.position);
+
+            float Alpha1 = Mathf.Atan2(X2_z-X1_z , X2_x-X1_x);
+            
+            float theta = Alpha1;
+
+
+            float theta1 = Mathf.Atan2(Mathf.Sin(theta), 1+Mathf.Cos(theta));
+
+            float theta2 = (Mathf.PI-theta)/2;
+
+            float V1mag = speed.magnitude*Mathf.Sqrt(1+Mathf.Cos(theta)/2);
+            float V2mag = speed.magnitude*Mathf.Sin(theta/2);
+            
+            Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
+            Vector3 V2 = -V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
+            
+            impactStone(V2, rigidBody.position);
+            s2.impactStone(V1, s2.getPosition());
         
-        float Alpha1= Mathf.Atan2(X2_z-X1_z , X2_x-X1_x);
-        float Beta1=Mathf.Atan2(direction.z,direction.x);
-        float theta = Alpha1- Beta1;
+    }
 
-        float theta1 = Mathf.Atan2(Mathf.Sin(theta), 1+Mathf.Cos(theta));
-    
-        float theta2 = (Mathf.PI-theta)/2;
+    public void impactStone(Vector3 speed, Vector3 start){
+        traj.setTraj(speed, start, 0, false);
+        
+    }
 
-        float V1mag = direction.magnitude*Mathf.Sqrt(1+Mathf.Cos(theta)/2);
-        float V2mag = direction.magnitude*Mathf.Sin(theta/2);
+    public void OnReached(){
+        if(thrown){manager.OnThrowSimulationEnded();}
+        ResetStone();
+    }
 
-        Vector3 V1 = V1mag * new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
-        Vector3 V2 = V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
-
-        //avoid computation by both side
-        s2.wasCollided = true;
-
-        impactStone(V2, rigidBody.position, 0);
-        s2.impactStone(V1, s2.getPosition(), 0);
+    public void ResetStone(){
+        time = 0f;
+        thrown = false;
+        traj.resetTraj(rigidBody.position);
     }
 }

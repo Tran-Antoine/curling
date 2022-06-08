@@ -1496,8 +1496,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 10.354, y: -8.084}
+  m_SizeDelta: {x: 620.66, y: 281.7403}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &120895535
 MonoBehaviour:
@@ -1519,7 +1519,16 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: TODO
+  m_text: "The goal of the game is to get as many stones as possible as close to
+    the center of the circles on the map as possible. When you throw a stone, it
+    can collide with any other stones and push them closer of further from the circle
+    center. The player with the stone closest to the circle wins as many points as
+    stones that are closer to the circle center than any of his opponents points.
+    \nBefore the game begins, you will have to choose the number of turns, meaning
+    the number of throws each player gets. \nThe points are shown on the screen,
+    as well as the number of turns left and the player whose turn it is. The camera
+    can be moved using the WASD keys and its rotation is set with the mouse. The
+    cellulos are moved (thrown) with IJKL and the arrows."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1bcac47c85b9fee4e81dee433eca9aac, type: 2}
   m_sharedMaterial: {fileID: -7604293455181505323, guid: 1bcac47c85b9fee4e81dee433eca9aac, type: 2}
@@ -1546,8 +1555,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -11799,7 +11808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1032987852
 Transform:
   m_ObjectHideFlags: 0
@@ -12119,7 +12128,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1063549824
 Transform:
   m_ObjectHideFlags: 0
@@ -22331,7 +22340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1819873756
 Transform:
   m_ObjectHideFlags: 0
