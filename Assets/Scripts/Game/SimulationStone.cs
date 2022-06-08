@@ -8,7 +8,7 @@ public class SimulationStone : AgentBehaviour
 
     private StaticStone logicStone;
 
-    public bool wasCollided = false;
+    public bool isThrown = false;
     // Start is called before the first frame update
 
     private Trajectory traj;
@@ -24,7 +24,13 @@ public class SimulationStone : AgentBehaviour
 
     private CelluloAgent cellulo;
     private Rigidbody rigidBody;
+    private bool first = true;
 
+    private bool thrown = false;
+
+    public void SetThrown(bool b){
+        thrown = b;
+    }
     public StaticStone GetLogicStone()
     { 
         return logicStone; 
@@ -38,20 +44,20 @@ public class SimulationStone : AgentBehaviour
         stone = gameObject;
         
         stone.tag = "Stone";
-        Debug.Log("Stoneeee" + stone);
+        //Debug.Log("Stoneeee" + stone);
         if(cellulo == null){
             cellulo = stone.GetComponentInParent<CelluloAgent>();
         }
 
-        Debug.Log("cellulo :" + cellulo);
+        //Debug.Log("cellulo :" + cellulo);
         if(rigidBody == null){
             rigidBody = stone.GetComponent<Rigidbody>();
         }
 
-        Debug.Log("rigidBody :" + rigidBody);
+        //Debug.Log("rigidBody :" + rigidBody);
 
         if(traj == null){
-            traj = new Trajectory(manager);
+            traj = new Trajectory(manager, this);
         }
 
     }
@@ -61,7 +67,7 @@ public class SimulationStone : AgentBehaviour
     {
         if(traj.isComputed){
             time += Time.deltaTime;
-        }
+        } 
 
         this.logicStone.SetPosition(rigidBody.position);    
     }
@@ -103,6 +109,8 @@ public class SimulationStone : AgentBehaviour
         //gameObject.GetComponent<Collider>().enabled = true;
         traj.resetTraj(rigidBody.position);
         traj.setTraj(velocity, start, angMom, true);
+        //traj.setTrajWithTarget(new Vector3(22.3f, -1.3f, 0f), rigidBody.position);
+        isThrown = true;
     }
 
     //returns the x coordinate of the throw => idea : show it on screen
@@ -114,19 +122,14 @@ public class SimulationStone : AgentBehaviour
         traj.increaseCurl(speed, direction);
     }
 
-    public void impactStone(Vector3 velocity, Vector3 start, float angMom){
-        //gameObject.GetComponent<Collider>().enabled = true;
-        traj.setTraj(velocity, start, angMom, false);
-    }
-
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
+            Debug.Log("rentré dans caillou");
+            //if(isThrown){
+           
             SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
-            if(wasCollided){
-                wasCollided = false;
-                return;
-            }
             collideWith(stone2);
+            //}
         }
         if(comp(other, "Wall")){
             stopStone(getPosition());
@@ -135,6 +138,7 @@ public class SimulationStone : AgentBehaviour
 
     public void stopStone(Vector3 position){
         traj.setTrajWithTarget(position, position);
+        isThrown = false;
         manager.OnThrowSimulationEnded();
     }
 
@@ -142,7 +146,7 @@ public class SimulationStone : AgentBehaviour
         return rigidBody.position;
     }
 
-    public Vector3 getDirection(){
+    public Vector3 getSpeed(){
         return rigidBody.velocity != null ? rigidBody.velocity : Vector3.zero;
     }
 
@@ -155,32 +159,56 @@ public class SimulationStone : AgentBehaviour
     private void collideWith(SimulationStone s2){
         //Source : https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
 
+        if (thrown){
+
+            float X1_x = rigidBody.position.x;
+            float X2_x = s2.getPosition().x;
+            float X1_z = rigidBody.position.z;
+            float X2_z = s2.getPosition().z;
+
+            Vector3 speed = getSpeed();
+
+
+            traj.resetTraj(rigidBody.position);
+            float Alpha1 = Mathf.Atan2(X2_z-X1_z , X2_x-X1_x);
+
+            //Vector3 d2 = new Vector3(X2_x - X1_x, 0, X2_z - X1_z);
+
+            //float Beta1 = Mathf.Atan2(speed.z,speed.x);
+
+
+            
+            float theta = Alpha1;
+
+
+            float theta1 = Mathf.Atan2(Mathf.Sin(theta), 1+Mathf.Cos(theta));
+
+            float theta2 = (Mathf.PI-theta)/2;
+
+            float V1mag = speed.magnitude*Mathf.Sqrt(1+Mathf.Cos(theta)/2);
+            float V2mag = speed.magnitude*Mathf.Sin(theta/2);
+
+            
+            //V1 : BASE - V2
+
+
+            
+            Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
+            Vector3 V2 = -V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
+            
+
+            //Debug.Log("V1 = " + V1);
+            Debug.Log("ownSpeed = " + V2);
+            
+            //avoid computation by both side
+            impactStone(V2, rigidBody.position);
+            s2.impactStone(V1, s2.getPosition());
+        }
+    }
+
+    public void impactStone(Vector3 speed, Vector3 start){
+        //gameObject.GetComponent<Collider>().enabled = true;
+        traj.setTraj(speed, start, 0, false);
         
-        float X1_x = rigidBody.position.x;
-        float X2_x = s2.getPosition().x;
-        float X1_z = rigidBody.position.z;
-        float X2_z = s2.getPosition().z;
-    
-        Vector3 direction = getDirection();
-        
-        float Alpha1= Mathf.Atan2(X2_z-X1_z , X2_x-X1_x);
-        float Beta1=Mathf.Atan2(direction.z,direction.x);
-        float theta = Alpha1- Beta1;
-
-        float theta1 = Mathf.Atan2(Mathf.Sin(theta), 1+Mathf.Cos(theta));
-    
-        float theta2 = (Mathf.PI-theta)/2;
-
-        float V1mag = direction.magnitude*Mathf.Sqrt(1+Mathf.Cos(theta)/2);
-        float V2mag = direction.magnitude*Mathf.Sin(theta/2);
-
-        Vector3 V1 = V1mag * new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
-        Vector3 V2 = V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
-
-        //avoid computation by both side
-        s2.wasCollided = true;
-
-        impactStone(V2, rigidBody.position, 0);
-        s2.impactStone(V1, s2.getPosition(), 0);
     }
 }

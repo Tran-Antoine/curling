@@ -1,3 +1,4 @@
+using System;
 public class CurlingGame : Game
 {
 
@@ -13,6 +14,7 @@ public class CurlingGame : Game
     
     public void PlayTurn()
     {
+        Console.WriteLine("Playturn !");
 
         if(!state.IsWaitingForNext()) {
             return;
@@ -29,7 +31,7 @@ public class CurlingGame : Game
 
     public void PlayThrow(StaticStone stone)
     {
-
+        Console.WriteLine("PlayThrow' !");
         state.SetWaitingForNext(false);
         int activePlayer = state.GetActivePlayer();
         stone.SetPlayer(activePlayer);
@@ -49,6 +51,7 @@ public class CurlingGame : Game
 
     public void StartGame()
     {
+        Console.WriteLine("StartGame !");
         manager.OnGameStarted();
         state.SetWaitingForNext(true);
         PlayTurn();
@@ -56,21 +59,25 @@ public class CurlingGame : Game
     
     public void EndGame()
     {
+        Console.WriteLine("Endgame !");
         manager.OnGameEnded();
     }
     
     public void EndTurn()
     {
+        Console.WriteLine("End Turn called");
         (int score, int scorer) = ScoreCalculator.ComputeScore(state.GetStones());
         manager.ShowScore(score, scorer);
     }
 
     public void EndThrow()
     {
+        Console.WriteLine("EndThrow !");
         manager.AllowNext();
     }
 
     public void MarkReadyForThrow() {
+        Console.WriteLine("MarkReadyForThrow() !");
         this.state.SetWaitingForNext(true);
     }
 }

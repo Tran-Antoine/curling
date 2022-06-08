@@ -27,7 +27,7 @@ public class GameState
     }
 
     public bool IsWaitingForNext() {
-        return waitingForNext;
+        return waitingForNext || remainingTurns == turns && activePlayer == 0;
     }
 
     public void SetWaitingForNext(bool val) {

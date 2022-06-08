@@ -7,13 +7,13 @@ public class Trajectory : MonoBehaviour
 
     public IOManager ioManager; // TODO: set the value
 
-    private float BEZIER_DISTANCE_THRESHOLD = 1f;
+    private float BEZIER_DISTANCE_THRESHOLD = 0.1f;
     private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 0.5f;
 
 
     public float distanceMultiplierThrow = 20f;
-    public float distanceMultiplierCollision = 5f;
+    public float distanceMultiplierCollision = 4f;
     public float curveMultiplier = 0.75f;
 
     Vector3[] points = new Vector3[4];
@@ -27,9 +27,11 @@ public class Trajectory : MonoBehaviour
 
     private Vector3 finalPosition = Vector3.zero;
     
+    private SimulationStone stone;
 
-    public Trajectory(IOManager manager){
+    public Trajectory(IOManager manager, SimulationStone stone){
         this.ioManager = manager;
+        this.stone = stone;
     }
 
     //to reset the trajectory
@@ -73,31 +75,44 @@ public class Trajectory : MonoBehaviour
     public Vector3 NextPosition(Vector3 currentPosition){
         if(samplePoints.Count == 0){
                 isComputed = false;
-            }
+                justStopped = true;
+        }
         if(isComputed){
             if(Vector3.Distance(currentPosition, samplePoints.Peek()) < ATTAINED_THERSHOLD){
                 return samplePoints.Dequeue();
-        }
+            }
             return samplePoints.Peek();
         }
         return currentPosition;
     }
 
     Vector3 goal = Vector3.zero;
+    private bool justStopped = false;
     
     //computes the next direction according to the current position
     public Vector3 NextDirection(Vector3 currentPosition){
+        
         if(isComputed){
             goal = NextPosition(currentPosition);
+            //Debug.Log("next position (goal): " + goal);
             return goal - currentPosition;
+        } else if (justStopped){
+            ioManager.OnThrowSimulationEnded();
+            justStopped = false;
+            stone.SetThrown(false);
+            //Debug.Log("Simulation stopped!");
         }
+        //Debug.Log("return (0,0,0)");
         return Vector3.zero;
+        
     }
+
+
 
     //main method, used to calculate the trajectory
     public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
         //stops the stone if it goes too slow
-        if (speed.magnitude < SPEED_THRESHOLD){
+        /**if (speed.magnitude < SPEED_THRESHOLD){
             points[0] = position;
             points[1] = position;
             points[2] = position;
@@ -111,8 +126,10 @@ public class Trajectory : MonoBehaviour
         }
         else{
             finalPosition = Vector3.zero;
-        }
+        }*/
         
+        finalPosition = Vector3.zero;
+
         //start of the curve
         points[0] = position;
         //adjust the maximum distance so that a throw can attain the circle, but collisions aren't too fast
@@ -138,10 +155,11 @@ public class Trajectory : MonoBehaviour
         if(Vector3.Distance(target, position) < ATTAINED_THERSHOLD){
             return;
         }
-            points[0] = position;
-            points[1] = target;
-            points[2] = target;
-            points[3] = target;
+        resetTraj(position);
+        points[0] = position;
+        points[1] = target;
+        points[2] = target;
+        points[3] = target;
 
          //keep a history of the trajectory
         globalTraj.Add(points);
@@ -163,7 +181,7 @@ public class Trajectory : MonoBehaviour
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
-                //showPoint(BezierCurve(i), Color.green);
+                showPoint(BezierCurve(i), Color.green);
             }
         }
         //add final point

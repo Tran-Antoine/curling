@@ -16,13 +16,11 @@ public class LineCrossingDetector : AgentBehaviour // Agent or Mono ?
 
     void Update()
     {
-        
         float posX = gameObject.GetComponent<Rigidbody>().transform.localPosition.x;
         prevX = currX;
         currX = posX;
 
         if (prevX <= LINE_POS_X && currX >= LINE_POS_X){
-            Debug.Log("if onstonethrown appelé");
             ioManager.OnStoneThrown(gameObject.GetComponent<SimulationStone>());
         }
     }
