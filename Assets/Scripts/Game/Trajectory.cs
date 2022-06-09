@@ -105,7 +105,7 @@ public class Trajectory
     //main method, used to calculate the trajectory
     public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
 
-        distanceMultiplierCollision = distanceMultiplierThrow/2;
+        distanceMultiplierCollision = distanceMultiplierThrow/3;
         curveMultiplier = distanceMultiplierThrow/25;
 
         resetTraj(position);
@@ -126,7 +126,7 @@ public class Trajectory
         isComputed = true;
         //to optimize, only take a few of the points of the bézier curve
         takeSamplePoints();
-        showPoint(points[2], Color.yellow);
+        //showPoint(points[2], Color.yellow);
         goal = position;
     }
 
@@ -157,7 +157,7 @@ public class Trajectory
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
-                showPoint(BezierCurve(i), Color.green);
+                //showPoint(BezierCurve(i), Color.green);
             }
         }
         //add final point

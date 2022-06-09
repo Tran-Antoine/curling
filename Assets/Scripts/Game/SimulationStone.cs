@@ -30,7 +30,6 @@ public class SimulationStone : AgentBehaviour
     private GameObject stone;
 
     public CelluloAgent cellulo;
-    private Rigidbody rigidBody;
     private bool first = true;
 
     private bool thrown = false;
@@ -56,10 +55,6 @@ public class SimulationStone : AgentBehaviour
 
         if(cellulo == null){
             cellulo = stone.GetComponentInParent<CelluloAgent>();
-        }
-
-        if(rigidBody == null){
-            rigidBody = stone.GetComponent<Rigidbody>();
         }
 
         if(traj == null){
@@ -93,7 +88,8 @@ public class SimulationStone : AgentBehaviour
         rotations.RemoveAt(0);
         rotations.Add(transform.rotation);
 
-        angVel = averageAngVel.Average();
+        if(!traj.isComputed)
+            {angVel = averageAngVel.Average();}
 
         if(isFinished){
             ResetStone();
@@ -109,7 +105,7 @@ public class SimulationStone : AgentBehaviour
 
         steering.linear = direction() * Mathf.Max(cellulo.maxAccel - drag*time*time, 0);
 
-        steering.angular = AngVel() * cellulo.maxAngularAccel;
+        steering.angular = angVel * cellulo.maxAngularAccel;
 
         return steering;
     }
@@ -174,16 +170,16 @@ public class SimulationStone : AgentBehaviour
         //Source : https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
 
             
-            float X1_x = rigidBody.position.x;
+            float X1_x = transform.position.x;
             float X2_x = s2.getPosition().x;
-            float X1_z = rigidBody.position.z;
+            float X1_z = transform.position.z;
             float X2_z = s2.getPosition().z;
 
             Vector3 speed = getSpeed();
 
 
-            traj.resetTraj(rigidBody.position);
-            s2.traj.resetTraj(s2.rigidBody.position);
+            traj.resetTraj(transform.position);
+            s2.traj.resetTraj(s2.transform.position);
 
             float Alpha = Mathf.Atan2(X2_z-X1_z , X2_x-X1_x);
             float Beta = Mathf.Atan2(speed.z, speed.x);
@@ -201,13 +197,17 @@ public class SimulationStone : AgentBehaviour
             Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
             Vector3 V2 = V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
             
-            impactStone(V2, rigidBody.position);
-            s2.impactStone(V1, s2.getPosition());
+            impactStone(V2, transform.position, angVel/2f);
+            s2.impactStone(V1, s2.getPosition(), 0f);
         
     }
 
-    public void impactStone(Vector3 speed, Vector3 start){
-        traj.setTraj(speed, start, 0, false);
+    public void impactStone(Vector3 speed, Vector3 start, float angVelImpact){
+        
+        averageAngVel = Enumerable.Repeat(angVelImpact, 20).ToList();
+        angVel = angVelImpact;
+        isFinished = false;
+        traj.setTraj(speed, start, angVel, false);
         
     }
 
@@ -231,10 +231,6 @@ public class SimulationStone : AgentBehaviour
         averageAngVel = Enumerable.Repeat(0f, 20).ToList();
         angVel = 0f;
         
-    }
-
-    public float AngVel(){
-        return angVel;
     }
 
 }
