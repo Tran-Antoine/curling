@@ -104,7 +104,6 @@ public class SimulationStone : AgentBehaviour
             ResetStone();
         }      
         
-        this.logicStone.SetPosition(rigidBody.position); 
         
      
     }
