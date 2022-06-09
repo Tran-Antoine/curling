@@ -407,6 +407,8 @@ MonoBehaviour:
   simulatedTouch: 740000007200000066000000760000006200000068000000
   ledColorWhenTouched: {r: 1, g: 1, b: 1, a: 1}
   initialColor: {r: 0, g: 0, b: 0, a: 0}
+  basePosition: {x: 0, y: 0, z: 0}
+  stone: {fileID: 0}
   deleted: 0
 --- !u!114 &8784870014489734678
 MonoBehaviour:
@@ -429,6 +431,7 @@ MonoBehaviour:
     m_Bits: 1
   manager: {fileID: 0}
   cellulo: {fileID: 0}
+  image: 0
 --- !u!114 &1318346121297525248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1211,6 +1214,10 @@ PrefabInstance:
     - target: {fileID: 114000011393513452, guid: 0ed203d298c050b49bfabe788790e1c2, type: 3}
       propertyPath: floatSpeed
       value: 0.0025
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011393513452, guid: 0ed203d298c050b49bfabe788790e1c2, type: 3}
+      propertyPath: isFloating
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114000011393513452, guid: 0ed203d298c050b49bfabe788790e1c2, type: 3}
       propertyPath: testtlooool

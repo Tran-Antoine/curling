@@ -15,7 +15,7 @@ public class SimulationStone : AgentBehaviour
 
     private float time = 0f;
 
-    private const float drag = 0.1f;
+    private const float drag = 0.001f;
 
     public IOManager manager;
 
@@ -60,6 +60,8 @@ public class SimulationStone : AgentBehaviour
         if(traj == null){
             traj = new Trajectory(manager, this);
         }
+        cellulo.SetCasualBackdriveAssistEnabled(true);
+        //cellulo.SetHapticBackdriveAssistEnabled(true);
 
     }
 
@@ -71,14 +73,14 @@ public class SimulationStone : AgentBehaviour
         } 
         this.logicStone.SetPosition(rigidBody.position); 
 
-        traj.PrintTraj();   
+        //traj.PrintTraj();   
     }
+
+    Steering steering = new Steering();
 
     //TODO add rotation
     public override Steering GetSteering(){
-        Steering steering = new Steering();
-
-        steering.linear = direction() * Mathf.Max(cellulo.maxAccel - drag*time*time, 0);
+        steering.linear = direction().normalized * cellulo.maxSpeed;
         return steering;
     }
 
@@ -93,7 +95,9 @@ public class SimulationStone : AgentBehaviour
 
     public void ThrowStoneFromCurrentVelocities()
     {
-        ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
+
+        //Debug.Log("mdr : " + cellulo.GetVelocity());
+        ThrowStone(cellulo.GetVelocity(), rigidBody.position, cellulo.GetSteeringAngular());
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
         time = 0f;
@@ -114,7 +118,7 @@ public class SimulationStone : AgentBehaviour
         if(comp(other, "Stone")){
            if (thrown){ 
                 SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
-                Debug.Log("moi, caillou " + this + " est rentré dans : " + stone2);
+                //Debug.Log("moi, caillou " + this + " est rentré dans : " + stone2);
                 
                 collideWith(stone2);
             }

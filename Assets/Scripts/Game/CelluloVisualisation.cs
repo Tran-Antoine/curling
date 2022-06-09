@@ -106,8 +106,12 @@ public class CelluloVisualisation : MonoBehaviour
         CelluloAgent closest = ClosestPlayer(image);
         //Destroy(agent.GetComponent<Rigidbody>());
         //agent.GetComponent<CelluloAgentRigidBody>().Delete();
-        closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
         DeleteBodyRecursively(image.gameObject);
+        MoveNextImageToPosition(closest);
+        closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
+        dummy.StartCoroutine(RestoreStoneWithDelay(closest));
+        MoveImageBackHome(image);
+        
     }
 
     public static void RecallClosestCellulo(){
@@ -131,20 +135,27 @@ public class CelluloVisualisation : MonoBehaviour
             }
             
         }
-        CelluloAgent image = MoveImageToPosition(map[closest]);
-        RestoreBodyRecursively(image.gameObject);
+        CelluloAgent image = MoveNextImageToPosition(map[closest]);
+        //RestoreBodyRecursively(image.gameObject);
 
         DeleteBodyRecursively(map[closest].gameObject);
         
-        dummy.StartCoroutine(RestoreWithDelay(map[closest]));
+        dummy.StartCoroutine(RestoreStoneWithDelay(map[closest]));
         ResetAllTraj();
         MoveStoneBackHome(map[closest]);
     }
 
-    private static IEnumerator RestoreWithDelay(CelluloAgent stone){
+    private static IEnumerator RestoreStoneWithDelay(CelluloAgent stone){
             yield return new WaitForSeconds(3);
             RestoreBodyRecursively(stone.gameObject);
     }
+
+    private static IEnumerator RestoreImageWithDelay(CelluloAgent image){
+            yield return new WaitForSeconds(1);
+            RestoreBodyRecursively(image.gameObject);
+    }
+
+    
 
     private static IEnumerator MoveBackHomeWithDelay(CelluloAgent stone){
             yield return new WaitForSeconds(2);
@@ -196,6 +207,7 @@ public class CelluloVisualisation : MonoBehaviour
         foreach (CelluloAgent agent in images)
         {
             agent.stone.ResetStone();
+
         }
 
     }
@@ -204,14 +216,19 @@ public class CelluloVisualisation : MonoBehaviour
 
 
 
-    static CelluloAgent MoveImageToPosition(CelluloAgent agent){
-        images[i].SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, agent.maxAccel);
-        return images[i++];
+    static CelluloAgent MoveNextImageToPosition(CelluloAgent agent){
+        DeleteBodyRecursively(agent.gameObject);
+        images[0].SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, agent.maxAccel);
+        CelluloAgent res = images[0];
+        images.RemoveAt(0);
+
+        dummy.StartCoroutine(RestoreImageWithDelay(res));
+        return res;
     }
 
     static void MoveImageBackHome(CelluloAgent image){
         image.SetGoalPosition(image.basePosition.x, image.basePosition.z, image.maxAccel);
-        ++i;
+        images.Add(image);
     }
 
 
