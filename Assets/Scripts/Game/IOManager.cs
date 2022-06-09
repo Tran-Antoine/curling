@@ -88,8 +88,8 @@ public class IOManager : MonoBehaviour
         {   
             this.pendingData = stone;
 
-            //stone.ThrowStoneFromCurrentVelocities();
-            stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
+            stone.ThrowStoneFromCurrentVelocities();
+            //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
 
             stone.SetThrown(true);
             ++throws;
