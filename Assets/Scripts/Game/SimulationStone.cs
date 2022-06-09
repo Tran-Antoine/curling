@@ -19,6 +19,13 @@ public class SimulationStone : AgentBehaviour
 
     public IOManager manager;
 
+    
+    List<Vector3> positions = new List<Vector3>();
+    Vector3 speed;
+    float angVel;
+    List<Quaternion> rotations = new List<Quaternion>();
+    List<float> averageAngVel = new List<float>();
+
 
     private GameObject stone;
 
@@ -59,28 +66,56 @@ public class SimulationStone : AgentBehaviour
             traj = new Trajectory(manager, this);
         }
 
+        positions = Enumerable.Repeat(transform.position, 100).ToList();
+        rotations = Enumerable.Repeat(transform.rotation, 20).ToList();
+        averageAngVel = Enumerable.Repeat(0f, 20).ToList();
+
     }
 
+    
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(cellulo.maxAccel);
         if(traj.isComputed){
             time += Time.deltaTime;
         } 
-        this.logicStone.SetPosition(rigidBody.position);
+        this.logicStone.SetPosition(transform.position);
+        
+        speed = (positions.Last() - positions.First())/(Time.deltaTime*positions.Count);
+
+        positions.RemoveAt(0);
+        positions.Add(transform.position);
+      
+        
+        averageAngVel.RemoveAt(0);
+        averageAngVel.Add(Quaternion.Angle(rotations.First(), rotations.Last())/(Time.deltaTime*rotations.Count)*Mathf.Deg2Rad);
+
+        rotations.RemoveAt(0);
+        rotations.Add(transform.rotation);
+
+        angVel = averageAngVel.Average();
+
+        if(isFinished){
+            ResetStone();
+        }       
+        
+     
     }
 
-    //TODO add rotation
+
+
     public override Steering GetSteering(){
         Steering steering = new Steering();
 
         steering.linear = direction() * Mathf.Max(cellulo.maxAccel - drag*time*time, 0);
+
+        steering.angular = AngVel() * cellulo.maxAngularAccel;
+
         return steering;
     }
 
     private Vector3 direction(){
-        return traj.NextDirection(rigidBody.position);
+        return traj.NextDirection(transform.position);
     }
 
     bool comp(Collision obj, string tag)
@@ -89,13 +124,16 @@ public class SimulationStone : AgentBehaviour
     }
 
     public void ThrowStoneFromCurrentVelocities()
-    {
-        ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
+    {     
+        ThrowStone(speed, transform.position, angVel);
     }
-    public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
+    public void ThrowStone(Vector3 velocity, Vector3 start, float angVelThrow){
+        
+        averageAngVel = Enumerable.Repeat(angVelThrow, 20).ToList();
+        angVel = angVelThrow;
         isFinished = false;
         time = 0f;
-        traj.setTraj(velocity, start, angMom, true);
+        traj.setTraj(velocity, start, angVel, true);
         thrown = true;
     }
 
@@ -118,21 +156,21 @@ public class SimulationStone : AgentBehaviour
     }
 
     public Vector3 getPosition(){
-        return rigidBody.position;
+        return transform.position;
     }
 
     public Vector3 getSpeed(){
-        return rigidBody.velocity != null ? rigidBody.velocity : Vector3.zero;
+        return speed != null ? speed : Vector3.zero;
     }
 
 
     //returns in a straight line to start. Collisions are disabled  
     public void returnToStart(Vector3 start){
         isFinished = false;
-        traj.setTrajWithTarget(start, rigidBody.position);
+        traj.setTrajWithTarget(start, transform.position);
     }
 
-    private void collideWith(SimulationStone s2){
+     private void collideWith(SimulationStone s2){
         //Source : https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
 
             
@@ -186,6 +224,17 @@ public class SimulationStone : AgentBehaviour
     public void ResetStone(){
         time = 0f;
         thrown = false;
-        traj.resetTraj(rigidBody.position);
+        traj.resetTraj(transform.position);
+
+        positions = Enumerable.Repeat(transform.position, 100).ToList();
+        rotations = Enumerable.Repeat(transform.rotation, 20).ToList();
+        averageAngVel = Enumerable.Repeat(0f, 20).ToList();
+        angVel = 0f;
+        
     }
+
+    public float AngVel(){
+        return angVel;
+    }
+
 }

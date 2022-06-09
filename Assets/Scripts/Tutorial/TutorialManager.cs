@@ -81,7 +81,7 @@ public class TutorialManager : MonoBehaviour
 
     void StraightThrow(){
         if(straightStarted){
-            simStone.ThrowStone(Vector3.right, simStone.getPosition(), 0f);
+            simStone.ThrowStone(4f*Vector3.right, simStone.getPosition(), 0f);
             straightStarted = false;
         }
         if(simStone.getIsFinished()){
@@ -92,7 +92,7 @@ public class TutorialManager : MonoBehaviour
     }
     void CurlThrow(){
         if(curlStarted){
-            simStone.ThrowStone(new Vector3(0.85f, 0f,-0.25f), simStone.getPosition(), 0.35f);
+            simStone.ThrowStone(3.75f*(new Vector3(0.85f, 0f,0.25f)), simStone.getPosition(),  1.15f);
             curlStarted = false;
         }
         if(simStone.getIsFinished()){
@@ -105,7 +105,7 @@ public class TutorialManager : MonoBehaviour
     }
     void TakeOut(){
         if(takeOutStarted){
-            simStone.ThrowStone(new Vector3(1.25f, 0f,0f), simStone.getPosition(), 0.0f);
+            simStone.ThrowStone(4*new Vector3(1.25f, 0f,0f), simStone.getPosition(), 0.0f);
             takeOutStarted = false;
         }
         if(simStone.getIsFinished()){
