@@ -28,6 +28,8 @@ public class SimulationStone : AgentBehaviour
 
     private bool thrown = false;
 
+    private bool isFinished = true;
+
     public void SetThrown(bool b){
         thrown = b;
     }
@@ -62,10 +64,11 @@ public class SimulationStone : AgentBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(cellulo.maxAccel);
         if(traj.isComputed){
             time += Time.deltaTime;
         } 
-        this.logicStone.SetPosition(rigidBody.position);    
+        this.logicStone.SetPosition(rigidBody.position);
     }
 
     //TODO add rotation
@@ -90,6 +93,7 @@ public class SimulationStone : AgentBehaviour
         ThrowStone(rigidBody.velocity, rigidBody.position, rigidBody.angularVelocity.magnitude);
     }
     public void ThrowStone(Vector3 velocity, Vector3 start, float angMom){
+        isFinished = false;
         time = 0f;
         traj.setTraj(velocity, start, angMom, true);
         thrown = true;
@@ -99,10 +103,6 @@ public class SimulationStone : AgentBehaviour
     /**public float showThrowDistance(){
         return traj.getFinalPosition().x;
     }*/
-
-    public void sweep(Vector3 speed, Vector3 direction){
-        traj.increaseCurl(speed, direction);
-    }
 
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
@@ -125,16 +125,17 @@ public class SimulationStone : AgentBehaviour
         return rigidBody.velocity != null ? rigidBody.velocity : Vector3.zero;
     }
 
+
     //returns in a straight line to start. Collisions are disabled  
     public void returnToStart(Vector3 start){
+        isFinished = false;
         traj.setTrajWithTarget(start, rigidBody.position);
     }
 
     private void collideWith(SimulationStone s2){
         //Source : https://en.wikipedia.org/wiki/Elastic_collision#Two-dimensional
 
-        
-
+            
             float X1_x = rigidBody.position.x;
             float X2_x = s2.getPosition().x;
             float X1_z = rigidBody.position.z;
@@ -151,7 +152,7 @@ public class SimulationStone : AgentBehaviour
             float theta = Alpha1;
 
 
-            float theta1 = Mathf.Atan2(Mathf.Sin(theta), 1+Mathf.Cos(theta));
+            float theta1 = theta/2;
 
             float theta2 = (Mathf.PI-theta)/2;
 
@@ -172,8 +173,13 @@ public class SimulationStone : AgentBehaviour
     }
 
     public void OnReached(){
-        if(thrown){manager.OnThrowSimulationEnded();}
+        if(thrown && manager != null){manager.OnThrowSimulationEnded();}
         ResetStone();
+        isFinished = true;
+    }
+
+    public bool getIsFinished(){
+        return isFinished;
     }
 
     public void ResetStone(){

@@ -7,7 +7,7 @@ public class Trajectory
 
     public IOManager ioManager; // TODO: set the value
 
-    private float BEZIER_DISTANCE_THRESHOLD = 0.1f;
+    private float BEZIER_DISTANCE_THRESHOLD = 1f;
     private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 0.5f;
 
@@ -113,7 +113,7 @@ public class Trajectory
         points[1].y = points[2].y;
 
         //last point accounts for the amount of curl
-        Quaternion quaternion =  angularVelocity > 0 ? Quaternion.Euler(0,-120,0) : Quaternion.Euler(0,120,0); 
+        Quaternion quaternion =  angularVelocity > 0 ? Quaternion.Euler(0,-60,0) : Quaternion.Euler(0,60,0); 
         points[3] = points[2] + curveMultiplier * angularVelocity * (quaternion * points[2]);
 
         //keep a history of the trajectory
@@ -156,7 +156,7 @@ public class Trajectory
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
-                showPoint(BezierCurve(i), Color.green);
+                //showPoint(BezierCurve(i), Color.green);
             }
         }
         //add final point

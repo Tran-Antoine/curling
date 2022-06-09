@@ -15,6 +15,9 @@ TagManager:
   - SpaceGem
   - TimeGem
   - Stone
+  - Straight Throw
+  - Curve Throw
+  - Take Out
   layers:
   - Default
   - TransparentFX
