@@ -13,4 +13,6 @@ public interface Game
     void EndThrow();
     void MarkReadyForThrow();
     void ExpectedWasThrown();
+
+    GameState GetState();
 }

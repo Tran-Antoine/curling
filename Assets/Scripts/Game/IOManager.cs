@@ -29,6 +29,11 @@ public class IOManager : MonoBehaviour
         this.game = game;
     }
 
+    public void SetGame()
+    {
+        return game;
+    }
+
     /// Triggered by Unity
     public void onStartClicked() 
     {   
