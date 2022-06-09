@@ -23,6 +23,7 @@ public class IOManager : MonoBehaviour
     public TextMeshProUGUI niceThrow;
     public List<string> messages = new List<string>(){"Nice job!", "Well done!", "Wow!", "Great!", "Impressive!", "Keep it up!", "Awesome!", "Amazing!", "Perfect!", "Phenomenal!", "Meh...", "Better luck next time"};
 
+    private int throws = 0;
     public void SetGame(Game game) 
     {
         this.game = game;
@@ -58,6 +59,11 @@ public class IOManager : MonoBehaviour
             gameOverBox.SetActive(true);
     }
 
+    private IEnumerator RecallClosestWithDelay(){
+            yield return new WaitForSeconds(3);
+            CelluloVisualisation.RecallClosestCellulo();
+    }
+
     /// Triggered by Game
     public void OnGameStarted() 
     {   
@@ -79,14 +85,15 @@ public class IOManager : MonoBehaviour
         if(game == null) return;
         
         if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
-        {
-            
+        {   
             this.pendingData = stone;
 
             stone.ThrowStoneFromCurrentVelocities();
             //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
 
             stone.SetThrown(true);
+            ++throws;
+
             game.ExpectedWasThrown();
         }
     }
@@ -97,6 +104,9 @@ public class IOManager : MonoBehaviour
     {  
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
 
+        if (throws > 2){
+            StartCoroutine(RecallClosestWithDelay());
+        }
         game.PlayThrow(pendingData.GetLogicStone());
         pendingData = null;
         

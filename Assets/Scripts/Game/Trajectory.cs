@@ -75,6 +75,7 @@ public class Trajectory
                 isComputed = false;
                 reached = true;
                 resetTraj(currentPosition);
+                return currentPosition;
         }
         if(isComputed){
             if(Vector3.Distance(currentPosition, samplePoints.Peek()) < ATTAINED_THERSHOLD){

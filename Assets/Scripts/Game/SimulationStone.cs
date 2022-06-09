@@ -15,7 +15,7 @@ public class SimulationStone : AgentBehaviour
 
     private float time = 0f;
 
-    private const float drag = 0.1f;
+    private const float drag = 0.001f;
 
     public IOManager manager;
 
@@ -44,10 +44,12 @@ public class SimulationStone : AgentBehaviour
         return logicStone; 
     }
 
+   
+    public bool image;
+
 
     void Start()
     {
-        
         this.logicStone = new StaticStone(Vector3.zero);
         stone = gameObject;
         
@@ -56,10 +58,17 @@ public class SimulationStone : AgentBehaviour
         if(cellulo == null){
             cellulo = stone.GetComponentInParent<CelluloAgent>();
         }
+        
+        cellulo.SetStone(this);
 
+        if(rigidBody == null){
+            rigidBody = stone.GetComponent<Rigidbody>();
+        }
         if(traj == null){
             traj = new Trajectory(manager, this);
         }
+        cellulo.SetCasualBackdriveAssistEnabled(true);
+        //cellulo.SetHapticBackdriveAssistEnabled(true);
 
         positions = Enumerable.Repeat(transform.position, 100).ToList();
         rotations = Enumerable.Repeat(transform.rotation, 20).ToList();
@@ -93,7 +102,9 @@ public class SimulationStone : AgentBehaviour
 
         if(isFinished){
             ResetStone();
-        }       
+        }      
+        
+        this.logicStone.SetPosition(rigidBody.position); 
         
      
     }
@@ -103,10 +114,10 @@ public class SimulationStone : AgentBehaviour
     public override Steering GetSteering(){
         Steering steering = new Steering();
 
-        steering.linear = direction() * Mathf.Max(cellulo.maxAccel - drag*time*time, 0);
+        steering.linear = direction().normalized * cellulo.maxSpeed;
 
         steering.angular = angVel * cellulo.maxAngularAccel;
-
+        
         return steering;
     }
 
@@ -141,8 +152,9 @@ public class SimulationStone : AgentBehaviour
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
            if (thrown){ 
-                Debug.Log("moi, caillou " + this + " est rentré dans : " + other);
                 SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
+                //Debug.Log("moi, caillou " + this + " est rentré dans : " + stone2);
+                
                 collideWith(stone2);
             }
         }
@@ -175,8 +187,9 @@ public class SimulationStone : AgentBehaviour
             float X1_z = transform.position.z;
             float X2_z = s2.getPosition().z;
 
+            
             Vector3 speed = getSpeed();
-
+            //Debug.Log("Speed : " + getSpeed());
 
             traj.resetTraj(transform.position);
             s2.traj.resetTraj(s2.transform.position);
@@ -194,6 +207,7 @@ public class SimulationStone : AgentBehaviour
             float V1mag = speed.magnitude*Mathf.Cos(theta/2);
             float V2mag = speed.magnitude*Mathf.Sin(theta/2);
             
+
             Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
             Vector3 V2 = V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
             

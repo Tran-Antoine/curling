@@ -9,7 +9,8 @@ using TMPro;
 public enum InputKeyboard{
     arrows = 0, 
     ijkl = 1,
-    mouse = 2
+    mouse = 2,
+    tfgh = 3
 }
 
 public class CelluloTestKeyboard : AgentBehaviour
@@ -29,6 +30,9 @@ public class CelluloTestKeyboard : AgentBehaviour
             case 2 :
                 inputKeyboard = InputKeyboard.ijkl;
                 break;
+            case 3 :
+                inputKeyboard = InputKeyboard.tfgh;
+                break;
         }
     }
 
@@ -47,6 +51,11 @@ public class CelluloTestKeyboard : AgentBehaviour
             case InputKeyboard.ijkl : 
                 zmvt = -Input.GetAxis("HorizontalIJKL");
                 xmvt = Input.GetAxis("VerticalIJKL");
+                break;
+
+            case InputKeyboard.tfgh : 
+                zmvt = -Input.GetAxis("HorizontalTFGH");
+                xmvt = Input.GetAxis("VerticalTFGH");
                 break;
                 
             case InputKeyboard.mouse :
