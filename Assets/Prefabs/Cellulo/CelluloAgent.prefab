@@ -427,8 +427,8 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 1
-  wasCollided: 0
   manager: {fileID: 0}
+  cellulo: {fileID: 0}
 --- !u!114 &1318346121297525248
 MonoBehaviour:
   m_ObjectHideFlags: 0

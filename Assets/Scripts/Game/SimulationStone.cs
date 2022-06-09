@@ -36,10 +36,12 @@ public class SimulationStone : AgentBehaviour
         return logicStone; 
     }
 
+   
+    public bool image;
+
 
     void Start()
     {
-        
         this.logicStone = new StaticStone(Vector3.zero);
         stone = gameObject;
         
@@ -48,6 +50,8 @@ public class SimulationStone : AgentBehaviour
         if(cellulo == null){
             cellulo = stone.GetComponentInParent<CelluloAgent>();
         }
+
+        cellulo.SetStone(this);
 
         if(rigidBody == null){
             rigidBody = stone.GetComponent<Rigidbody>();
@@ -65,7 +69,9 @@ public class SimulationStone : AgentBehaviour
         if(traj.isComputed){
             time += Time.deltaTime;
         } 
-        this.logicStone.SetPosition(rigidBody.position);    
+        this.logicStone.SetPosition(rigidBody.position); 
+
+        traj.PrintTraj();   
     }
 
     //TODO add rotation
@@ -107,8 +113,9 @@ public class SimulationStone : AgentBehaviour
     private void OnCollisionEnter(Collision other) {
         if(comp(other, "Stone")){
            if (thrown){ 
-                Debug.Log("moi, caillou " + this + " est rentré dans : " + other);
                 SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
+                Debug.Log("moi, caillou " + this + " est rentré dans : " + stone2);
+                
                 collideWith(stone2);
             }
         }

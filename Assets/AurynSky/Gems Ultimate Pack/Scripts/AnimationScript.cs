@@ -39,6 +39,10 @@ public class AnimationScript : MonoBehaviour {
     public static float INVISIBILITY_TIME = 5f;
     public float invisibility = 0f;
 
+    public bool image;
+
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -49,26 +53,19 @@ public class AnimationScript : MonoBehaviour {
 	}
 
     void OnMouseDown(){
-        cellulo.SetVisualEffect(VisualEffect.VisualEffectConstAll, SELECTED_COLOR, 1);
-        //DeleteBody();
-        CelluloVisualisation.MoveTo(cellulo);
+        if (image){ 
+            //cellulo.SetVisualEffect(VisualEffect.VisualEffectConstAll, SELECTED_COLOR, 1);
+            //cellulo.SetGoalPosition(cellulo.basePosition.x, cellulo.basePosition.z, cellulo.maxAccel);
+            //SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, toMove.maxAccel);
+            //DeleteBody();
+            CelluloVisualisation.MoveTo(cellulo);
+            //Invoke("RestoreBody", 3);
+        }
         //Invoke("SetInvisible", 5);
     }
 	
     
-    void SetInvisible(){ 
-        cellulo_body.GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<MeshRenderer>().enabled = false;
-        foreach(Transform t in cellulo_leds.transform){
-            t.gameObject.GetComponent<MeshRenderer>().enabled = false;
-        }
-        Invoke("SetVisible", 5);
-    }
-
-    void DeleteBody(){ 
-        cellulo_body.GetComponent<MeshCollider>().isTrigger = true;
-        GetComponent<BoxCollider>().isTrigger = true;
-    }
+    
 
 
     void SetVisible(){ 
