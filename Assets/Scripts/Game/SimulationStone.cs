@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SimulationStone : AgentBehaviour
 {   
-
+    public AudioSource collisionSound;
     private StaticStone logicStone;
 
     //public bool isThrown = false;
@@ -110,6 +110,7 @@ public class SimulationStone : AgentBehaviour
                 Debug.Log("moi, caillou " + this + " est rentré dans : " + other);
                 SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
                 collideWith(stone2);
+                collisionSound.Play();
             }
         }
         if(comp(other, "Wall")){

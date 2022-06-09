@@ -12,16 +12,20 @@ public class IOManager : MonoBehaviour
 
     private SimulationStone pendingData;
 
-
-    public TextMeshProUGUI scoreTextP0;
-    public TextMeshProUGUI scoreTextP1;
     public Button continueGame;
     public GameObject gameOverBox;
-    public int turns;
     public ToggleGroupTurns toggleGroupOptions;
     public TextMeshProUGUI startGameText;
     public TextMeshProUGUI niceThrow;
     public List<string> messages = new List<string>(){"Nice job!", "Well done!", "Wow!", "Great!", "Impressive!", "Keep it up!", "Awesome!", "Amazing!", "Perfect!", "Phenomenal!", "Meh...", "Better luck next time"};
+    
+    private int turnsLeft;
+    public TextMeshProUGUI turnsText;
+    private int currPlayer;
+    public TextMeshProUGUI currPlayerText;
+    
+    public TextMeshProUGUI winnerText;
+
 
     public void SetGame(Game game) 
     {
@@ -33,15 +37,18 @@ public class IOManager : MonoBehaviour
     {   
         toggleGroupOptions.Choose();
         while(toggleGroupOptions.turns == 0){}
-        SetGame(new CurlingGame(toggleGroupOptions.turns, this));
+        turnsLeft = toggleGroupOptions.turns;
+        SetGame(new CurlingGame(turnsLeft, this));
         if(game == null) return;
-
+        turnsText.text = "Turns left " + (turnsLeft).ToString();
         game.StartGame();
+        currPlayer = game.GetCurrPlayer();
     }
 
     /// Triggered by Unity
     public void onNextClicked() 
-    {
+    {   currPlayer = game.GetCurrPlayer();
+        currPlayerText.text = "Player : " + (currPlayer+1).ToString();
         if(game == null) return;
 
         game.MarkReadyForThrow();
@@ -100,6 +107,7 @@ public class IOManager : MonoBehaviour
         game.PlayThrow(pendingData.GetLogicStone());
         pendingData = null;
         
+
         System.Random rnd = new System.Random();
         int num = rnd.Next(0, messages.Count);
         niceThrow.text = messages[num];
@@ -108,12 +116,13 @@ public class IOManager : MonoBehaviour
 
     /// Triggered by Game
     public void ShowScore(int score, int scorer)
-    {
-        if (scorer == 0) {
-            scoreTextP0.text = score.ToString();
-        } else {
-            scoreTextP1.text = score.ToString();
-        }
+    { 
+        winnerText.text = "Player " + (scorer+1).ToString() + " wins with " + score.ToString() + " points!";
+    }
+
+    public void onEndTurn()
+    { 
+        turnsText.text = "Turns left " + (--turnsLeft).ToString();
     }
 
     /// Triggered by Game

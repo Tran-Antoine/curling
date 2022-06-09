@@ -13,4 +13,5 @@ public interface Game
     void EndThrow();
     void MarkReadyForThrow();
     void ExpectedWasThrown();
+    int GetCurrPlayer();
 }

@@ -41,12 +41,13 @@ public class CurlingGame : Game
 
         if(state.IsNewTurnStarting()) {
             if (state.GetRemainingTurns() == 0) {
-                PrepareForNextTurn();
+                //PrepareForNextTurn();
                 EndGame();
                 return;
             } else {
                 EndThrow();
                 EndTurn();
+                manager.onEndTurn();
                 return;
             }
         }
@@ -67,18 +68,20 @@ public class CurlingGame : Game
     
     public void EndGame()
     {
+        (int score, int scorer) = ScoreCalculator.ComputeScore(state.GetStones());
+        manager.ShowScore(score, scorer);
         manager.OnGameEnded();
     }
     
     public void EndTurn()
     {
-        PrepareForNextTurn();
+        //PrepareForNextTurn();
         PlayTurn();
     }
 
     public void PrepareForNextTurn(){
-        (int score, int scorer) = ScoreCalculator.ComputeScore(state.GetStones());
-        manager.ShowScore(score, scorer);
+        //(int score, int scorer) = ScoreCalculator.ComputeScore(state.GetStones());
+        //manager.ShowScore(score, scorer);
     }
 
     public void EndThrow()
@@ -92,5 +95,10 @@ public class CurlingGame : Game
 
     public void ExpectedWasThrown(){
         state.SetWaitingForNext(false);
+    }
+
+    public int GetCurrPlayer()
+    {
+        return state.GetActivePlayer();
     }
 }
