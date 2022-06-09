@@ -151,8 +151,9 @@ public class SimulationStone : AgentBehaviour
             float X1_z = rigidBody.position.z;
             float X2_z = s2.getPosition().z;
 
+            
             Vector3 speed = getSpeed();
-
+            //Debug.Log("Speed : " + getSpeed());
 
             traj.resetTraj(rigidBody.position);
             s2.traj.resetTraj(s2.rigidBody.position);
@@ -169,8 +170,8 @@ public class SimulationStone : AgentBehaviour
             float V1mag = speed.magnitude*Mathf.Sqrt(1+Mathf.Cos(theta)/2);
             float V2mag = speed.magnitude*Mathf.Sin(theta/2);
             
-            Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
-            Vector3 V2 = -V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
+            Vector3 V1 = 0.75f * V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
+            Vector3 V2 = 1.5f * -V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
             
             impactStone(V2, rigidBody.position);
             s2.impactStone(V1, s2.getPosition());

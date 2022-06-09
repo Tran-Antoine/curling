@@ -32,6 +32,7 @@ public class CelluloAgent : SteeringAgent
 
      public Vector3 basePosition;
 
+    private const float LINE_POS_X = 2.7f;
      public SimulationStone stone;
 
 	/// <summary>
@@ -50,6 +51,12 @@ public class CelluloAgent : SteeringAgent
     public void SetStone(SimulationStone stone){
         this.stone = stone;
     }
+
+    public bool LiesBeforeLine(){
+        return gameObject.transform.localPosition.x < LINE_POS_X;
+    }
+
+
     /// <summary>
     /// Fixed update loop
     /// </summary>
@@ -65,6 +72,8 @@ public class CelluloAgent : SteeringAgent
 
     protected virtual void Update()
     { 
+
+        //Debug.Log("cellulo : " + this + ", liesbeforeLine : " + LiesBeforeLine() + ".\n gameobject.transform.position = " + gameObject.transform.position);
         for (int i = 0; i < Config.CELLULO_KEYS; i++)
         {
             if (Input.GetKeyDown(simulatedTouch[i]))

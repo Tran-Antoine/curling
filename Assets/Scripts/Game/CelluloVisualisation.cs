@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,9 +49,6 @@ public class CelluloVisualisation : MonoBehaviour
     static LayerMask imagesLayer;
     static LayerMask stonesLayer;
 
-    private static int i = 0;
-
-    private static int curr = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -169,6 +163,7 @@ public class CelluloVisualisation : MonoBehaviour
 
     static CelluloAgent ClosestPlayer(CelluloAgent agent){
         
+        
         var map = new Dictionary<float, CelluloAgent>(); 
 
         float d1 = Vector3.Distance(agent1.transform.position, agent.transform.position);
@@ -180,19 +175,12 @@ public class CelluloVisualisation : MonoBehaviour
         float d3 = Vector3.Distance(agent3.transform.position, agent.transform.position);
         map[d3] = agent3;
 
-        Dictionary<float, CelluloAgent>.KeyCollection distances = map.Keys;
+        List<float> distances = new List<float>(map.Keys);
 
-        float min = float.MaxValue;
+        distances.Sort();
 
-        foreach (float d in distances)
-        {
-            if (min >= d){
-                min = d;
-            }
-            
-        }
-        
-        return map[min];
+        if (map[distances[0]].LiesBeforeLine()) return map[distances[1]];
+        else return map[distances[0]];
     }
 
     void RestoreBodies(){
