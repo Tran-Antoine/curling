@@ -70,4 +70,23 @@ public class GameState
         stones.Add(stone);
         stone.SetId(nStoneThrown++);
     }
+
+    public int GetClosestPlayer(Vector3 position)
+    {
+        float dis = 1000000;
+        StaticStone closest = null;
+
+        foreach (StaticStone stone in stones)
+        {
+            float stoneDis = Vector3.Distance(stone.GetPosition(), position);
+
+            if(stoneDis < dis)
+            {
+                dis = stoneDis;
+                closest = stone;
+            }
+        }
+
+        return closest.GetPlayer();
+    }
 }
