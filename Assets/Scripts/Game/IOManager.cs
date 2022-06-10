@@ -82,6 +82,14 @@ public class IOManager : MonoBehaviour
         StartCoroutine(WaitForSec(niceThrow));
         StartCoroutine(WaitForSec());
     }
+    
+
+    private IEnumerator LOL(SimulationStone stone){
+            yield return new WaitForSeconds(0.5f);
+            stone.ThrowStoneFromCurrentVelocities();
+    }
+
+
 
     /// Triggered by Unity
     /// TODO: Connecter l'évènement "Le robot passe la ligne de départ et donc est considéré comme lancé" à cette méthode (dans le code lié à Unity probablement)
@@ -93,10 +101,10 @@ public class IOManager : MonoBehaviour
         {   
             this.pendingData = stone;
 
+            stone.RegisterPosition();
+            
+            StartCoroutine(LOL(stone));
             CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
-
-            stone.ThrowStoneFromCurrentVelocities();
-            //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
 
             stone.SetThrown(true);
             ++throws;

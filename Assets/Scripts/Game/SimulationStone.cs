@@ -60,29 +60,65 @@ public class SimulationStone : AgentBehaviour
         }
         
         cellulo.SetStone(this);
+
         if(traj == null){
             traj = new Trajectory(manager, this);
         }
         cellulo.SetCasualBackdriveAssistEnabled(true);
         //cellulo.SetHapticBackdriveAssistEnabled(true);
 
-        positions = Enumerable.Repeat(transform.position, 100).ToList();
-        rotations = Enumerable.Repeat(transform.rotation, 20).ToList();
-        averageAngVel = Enumerable.Repeat(0f, 20).ToList();
+        //positions = Enumerable.Repeat(transform.position, 100).ToList();
+        //rotations = Enumerable.Repeat(transform.rotation, 20).ToList();
+        //averageAngVel = Enumerable.Repeat(0f, 20).ToList();
 
     }
 
     
+
+    Vector3 previousDir;
+
+    Vector3 previousPos;
+
+    int count = 6;
+
+    Vector3 throwPos;
+    
+
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(traj.isComputed){
             time += Time.deltaTime;
         } 
         this.logicStone.SetPosition(transform.position);
-        
-        speed = (positions.Last() - positions.First())/(Time.deltaTime*positions.Count);
 
+        
+        
+        //speed = Vector3.Lerp(transform.position, previousPos, 0.1f);
+        
+
+        /**
+        speed = (cellulo.transform.position - previousPos)/(6*Time.fixedDeltaTime);
+        Debug.Log("Cellulo : " + cellulo + ", Pos = " + cellulo.transform.position+ ", prevPos = " + previousPos);
+        Debug.Log("Cellulo : " + cellulo + "Speed = " + speed);
+
+        
+        speed.y = 0;
+
+        if (count == 0){
+            previousPos = cellulo.transform.position;
+            count = 6;
+            return;
+        }
+        
+        --count;*/
+        
+        //previousPos = transform.position;
+
+
+        //speed = (positions.Last() - positions.First())/(Time.deltaTime*positions.Count);
+
+        /**
         positions.RemoveAt(0);
         positions.Add(transform.position);
       
@@ -92,9 +128,10 @@ public class SimulationStone : AgentBehaviour
 
         rotations.RemoveAt(0);
         rotations.Add(transform.rotation);
+        */
 
         if(!traj.isComputed)
-            {angVel = averageAngVel.Average();}
+            //{angVel = averageAngVel.Average();}
 
         if(isFinished){
             ResetStone();
@@ -127,15 +164,22 @@ public class SimulationStone : AgentBehaviour
 
     public void ThrowStoneFromCurrentVelocities()
     {     
+        speed = (cellulo.transform.position - throwPos)/0.5f;
         ThrowStone(speed, transform.position, angVel);
     }
+
+    public void RegisterPosition(){
+        throwPos = transform.position;
+    }
+
+
     public void ThrowStone(Vector3 velocity, Vector3 start, float angVelThrow){
         
         averageAngVel = Enumerable.Repeat(angVelThrow, 20).ToList();
         angVel = angVelThrow;
         isFinished = false;
         time = 0f;
-        traj.setTraj(velocity, start, angVel, true);
+        traj.setTraj(velocity, start, 0, true);
         thrown = true;
     }
 
