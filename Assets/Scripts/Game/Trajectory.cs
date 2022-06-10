@@ -120,7 +120,7 @@ public class Trajectory
 
         //last point accounts for the amount of curl
         Quaternion quaternion =  angularVelocity < 0 ? Quaternion.Euler(0,-50,0) : Quaternion.Euler(0,50,0);
-        points[3] = points[2] + (angularVelocity*curveMultiplier) * (quaternion * points[2]);
+        points[3] = points[2]; //+ (angularVelocity*curveMultiplier) * (quaternion * points[2]);
         //keep a history of the trajectory
         globalTraj.Add(points);
 
@@ -158,7 +158,7 @@ public class Trajectory
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
-                //showPoint(BezierCurve(i), Color.green);
+                showPoint(BezierCurve(i), Color.green);
             }
         }
         //add final point
