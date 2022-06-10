@@ -29,7 +29,7 @@ public class IOManager : MonoBehaviour
         this.game = game;
     }
 
-    public void SetGame()
+    public Game GetGame()
     {
         return game;
     }

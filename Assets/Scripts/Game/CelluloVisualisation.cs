@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 public class CelluloVisualisation : MonoBehaviour
 {
 
-    public IOManager manager; // TODO : set this
+    public IOManager testManager; // TODO : set this
+    public static IOManager manager; // TODO : set this
 
     public GameObject spawned_cellulos;
     public GameObject c1;
@@ -90,9 +91,11 @@ public class CelluloVisualisation : MonoBehaviour
         stonesLayer = LayerMask.NameToLayer("Stones");
 
         dummy = this;
+
+        manager = testManager;
     }
 
-    void SetColor(CelluloAgent agent, Vector3 agentPosition)
+    static void SetColor(CelluloAgent agent, Vector3 agentPosition)
     {
         int playerId = manager.GetGame().GetState().GetClosestPlayer(agentPosition);
         agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);

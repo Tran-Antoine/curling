@@ -60,10 +60,6 @@ public class SimulationStone : AgentBehaviour
         }
         
         cellulo.SetStone(this);
-
-        if(rigidBody == null){
-            rigidBody = stone.GetComponent<Rigidbody>();
-        }
         if(traj == null){
             traj = new Trajectory(manager, this);
         }
