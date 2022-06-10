@@ -29,7 +29,7 @@ public class IOManager : MonoBehaviour
         this.game = game;
     }
 
-    public void SetGame()
+    public Game GetGame()
     {
         return game;
     }
@@ -92,6 +92,8 @@ public class IOManager : MonoBehaviour
         if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
         {   
             this.pendingData = stone;
+
+            CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
 
             stone.ThrowStoneFromCurrentVelocities();
             //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);

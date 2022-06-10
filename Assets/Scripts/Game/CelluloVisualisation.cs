@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 public class CelluloVisualisation : MonoBehaviour
 {
 
-    public IOManager manager; // TODO : set this
+    public IOManager testManager; // TODO : set this
+    public static IOManager manager; // TODO : set this
 
     public GameObject spawned_cellulos;
     public GameObject c1;
@@ -90,11 +91,18 @@ public class CelluloVisualisation : MonoBehaviour
         stonesLayer = LayerMask.NameToLayer("Stones");
 
         dummy = this;
+
+        manager = testManager;
     }
 
-    void SetColor(CelluloAgent agent, Vector3 agentPosition)
+    public static void SetColor(CelluloAgent agent, Vector3 agentPosition)
     {
         int playerId = manager.GetGame().GetState().GetClosestPlayer(agentPosition);
+        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
+    }
+
+    public static void SetColor(CelluloAgent agent, int playerId)
+    {
         agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
     }
 
@@ -115,7 +123,7 @@ public class CelluloVisualisation : MonoBehaviour
         MoveNextImageToPosition(closest);
         closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
 
-        SetColor(closest, image.transform.localPosition);
+        //SetColor(closest, image.transform.localPosition);
 
         dummy.StartCoroutine(RestoreStoneWithDelay(closest));
         MoveImageBackHome(image);
@@ -223,7 +231,7 @@ public class CelluloVisualisation : MonoBehaviour
         CelluloAgent res = images[0];
         res.SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, agent.maxAccel);
 
-        SetColor(res, agent.transform.localPosition);
+        //SetColor(res, agent.transform.localPosition);
 
         images.RemoveAt(0);
 

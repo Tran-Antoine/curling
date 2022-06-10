@@ -21,6 +21,10 @@ public class CurlingGame : Game
         return state;
     }
 
+    public int ActivePlayer()
+    {
+        return state.GetActivePlayer();
+    }
     
     public void PlayTurn()
     {
