@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 public class CelluloVisualisation : MonoBehaviour
 {
 
+    public IOManager testManager; // TODO : set this
+    public static IOManager manager; // TODO : set this
+
     public GameObject spawned_cellulos;
     public GameObject c1;
     public GameObject c2;
@@ -49,6 +52,9 @@ public class CelluloVisualisation : MonoBehaviour
     static LayerMask imagesLayer;
     static LayerMask stonesLayer;
 
+    public static Color p1 = new Color(66/256f, 135/256f, 60/256f);
+    public static Color p2 = new Color(204/256f, 155/256f, 45/256f);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,6 +91,19 @@ public class CelluloVisualisation : MonoBehaviour
         stonesLayer = LayerMask.NameToLayer("Stones");
 
         dummy = this;
+
+        manager = testManager;
+    }
+
+    public static void SetColor(CelluloAgent agent, Vector3 agentPosition)
+    {
+        int playerId = manager.GetGame().GetState().GetClosestPlayer(agentPosition);
+        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
+    }
+
+    public static void SetColor(CelluloAgent agent, int playerId)
+    {
+        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
     }
 
     // Update is called once per frame
@@ -103,6 +122,9 @@ public class CelluloVisualisation : MonoBehaviour
         DeleteBodyRecursively(image.gameObject);
         MoveNextImageToPosition(closest);
         closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
+
+        //SetColor(closest, image.transform.localPosition);
+
         dummy.StartCoroutine(RestoreStoneWithDelay(closest));
         MoveImageBackHome(image);
         
@@ -206,8 +228,11 @@ public class CelluloVisualisation : MonoBehaviour
 
     static CelluloAgent MoveNextImageToPosition(CelluloAgent agent){
         DeleteBodyRecursively(agent.gameObject);
-        images[0].SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, agent.maxAccel);
         CelluloAgent res = images[0];
+        res.SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, agent.maxAccel);
+
+        //SetColor(res, agent.transform.localPosition);
+
         images.RemoveAt(0);
 
         dummy.StartCoroutine(RestoreImageWithDelay(res));

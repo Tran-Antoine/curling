@@ -29,6 +29,11 @@ public class IOManager : MonoBehaviour
         this.game = game;
     }
 
+    public Game GetGame()
+    {
+        return game;
+    }
+
     /// Triggered by Unity
     public void onStartClicked() 
     {   
@@ -99,8 +104,7 @@ public class IOManager : MonoBehaviour
             stone.RegisterPosition();
             
             StartCoroutine(LOL(stone));
-            //stone.ThrowStoneFromCurrentVelocities();
-            //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
+            CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
 
             stone.SetThrown(true);
             ++throws;

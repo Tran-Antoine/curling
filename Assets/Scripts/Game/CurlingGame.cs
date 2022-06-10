@@ -16,6 +16,15 @@ public class CurlingGame : Game
         this.manager = manager;
     }
 
+    public GameState GetState()
+    {
+        return state;
+    }
+
+    public int ActivePlayer()
+    {
+        return state.GetActivePlayer();
+    }
     
     public void PlayTurn()
     {
