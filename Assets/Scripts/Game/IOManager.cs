@@ -93,6 +93,8 @@ public class IOManager : MonoBehaviour
         {   
             this.pendingData = stone;
 
+            CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
+
             stone.ThrowStoneFromCurrentVelocities();
             //stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
 
