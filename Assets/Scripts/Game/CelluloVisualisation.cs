@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 public class CelluloVisualisation : MonoBehaviour
 {
 
-    public IOManager testManager; // TODO : set this
-    public static IOManager manager; // TODO : set this
+    public IOManager testManager; 
+    public static IOManager manager; 
 
     public GameObject spawned_cellulos;
     public GameObject c1;
@@ -43,6 +43,7 @@ public class CelluloVisualisation : MonoBehaviour
     public static CelluloVisualisation dummy;
 
     static List<CelluloAgent> images = new List<CelluloAgent>();
+    static List<GameObject> gameObjects = new List<GameObject>();
 
 
     private static CelluloAgent agent1;
@@ -87,6 +88,20 @@ public class CelluloVisualisation : MonoBehaviour
         images.Add(image10);
         images.Add(image11);
         images.Add(image12);
+
+        gameObjects.Add(i_1);
+        gameObjects.Add(i_2);
+        gameObjects.Add(i_3);
+        gameObjects.Add(i_4);
+        gameObjects.Add(i_5);
+        gameObjects.Add(i_6);
+        gameObjects.Add(i_7);
+        gameObjects.Add(i_8);
+        gameObjects.Add(i_9);
+        gameObjects.Add(i_10);
+        gameObjects.Add(i_11);
+        gameObjects.Add(i_12);
+        
         imagesLayer = LayerMask.NameToLayer("Images");
         stonesLayer = LayerMask.NameToLayer("Stones");
 
@@ -106,6 +121,12 @@ public class CelluloVisualisation : MonoBehaviour
         agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
     }
 
+    private static void UpdateColor(CelluloAgent agent)
+    {
+        SimulationStone target = agent.stone;
+        int playerId = target.GetLogicStone().GetPlayer();
+        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
+    }
     // Update is called once per frame
     void Update()
     {
@@ -117,13 +138,14 @@ public class CelluloVisualisation : MonoBehaviour
 
         
         CelluloAgent closest = ClosestPlayer(image);
-        //Destroy(agent.GetComponent<Rigidbody>());
-        //agent.GetComponent<CelluloAgentRigidBody>().Delete();
+
         DeleteBodyRecursively(image.gameObject);
         MoveNextImageToPosition(closest);
         closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
 
-        //SetColor(closest, image.transform.localPosition);
+        manager.OnSwapRequested(image.stone, closest.stone);
+        UpdateColor(image);
+        UpdateColor(closest);
 
         dummy.StartCoroutine(RestoreStoneWithDelay(closest));
         MoveImageBackHome(image);
@@ -152,7 +174,10 @@ public class CelluloVisualisation : MonoBehaviour
             
         }
         CelluloAgent image = MoveNextImageToPosition(map[closest]);
-        //RestoreBodyRecursively(image.gameObject);
+
+        //manager.OnSwapRequested(image.stone, map[closest].stone);
+        UpdateColor(image);
+        UpdateColor(map[closest]);
 
         DeleteBodyRecursively(map[closest].gameObject);
         

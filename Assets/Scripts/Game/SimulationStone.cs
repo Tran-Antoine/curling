@@ -44,6 +44,11 @@ public class SimulationStone : AgentBehaviour
         return logicStone; 
     }
 
+    public void SetLogicStone(StaticStone logicStone)
+    {
+        this.logicStone = logicStone;
+    }
+
    
     public bool image;
 

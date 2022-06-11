@@ -21,6 +21,7 @@ public class IOManager : MonoBehaviour
     public ToggleGroupTurns toggleGroupOptions;
     public TextMeshProUGUI startGameText;
     public TextMeshProUGUI niceThrow;
+
     public List<string> messages = new List<string>(){"Nice job!", "Well done!", "Wow!", "Great!", "Impressive!", "Keep it up!", "Awesome!", "Amazing!", "Perfect!", "Phenomenal!", "Meh...", "Better luck next time"};
 
     private int throws = 0;
@@ -92,7 +93,6 @@ public class IOManager : MonoBehaviour
 
 
     /// Triggered by Unity
-    /// TODO: Connecter l'évènement "Le robot passe la ligne de départ et donc est considéré comme lancé" à cette méthode (dans le code lié à Unity probablement)
     public void OnStoneThrown(SimulationStone stone) 
     {
         if(game == null) return;
@@ -113,8 +113,18 @@ public class IOManager : MonoBehaviour
         }
     }
 
+    public void OnSwapRequested(SimulationStone s1, SimulationStone s2)
+    {
+
+        Debug.Log("Swapping " + s1.GetLogicStone().GetPlayer() + " with " + s2.GetLogicStone().GetPlayer());
+        StaticStone data1 = s1.GetLogicStone();
+        StaticStone data2 = s2.GetLogicStone();
+
+        s1.SetLogicStone(data2);
+        s2.SetLogicStone(data1);
+    }
+
     /// Triggered by Unity / The Simulation manager
-    /// TODO: Connecter l'évènement "La simulation du lancer est terminée" à cette méthode
     public void OnThrowSimulationEnded()
     {  
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
