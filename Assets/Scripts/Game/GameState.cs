@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameState : ISaveable
+public class GameState
 {
 
     private const int N_PLAYERS = 2;
@@ -72,12 +72,4 @@ public class GameState : ISaveable
     }
 
 
-    private static void SaveJsonData(GameManager a_GameManager){
-    SaveData savedata = new SaveData();
-    a_GameManager.PopulateSaveData(savedata);
-
-    if(FileManager.WriteToFile("SavedGame.dat", savedata.ToJson())){
-        Debug.Log("saved");
-    }
-}
 }
