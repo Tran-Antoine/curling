@@ -13,6 +13,8 @@ public class Settings : MonoBehaviour
     public Button p1_button;
     public Button p2_button;
 
+    public static bool curlsIncluded;
+    public static bool showTrajectory;
     //public static InputKeyboard p1_keyboard = InputKeyboard.wasd;
     //public static InputKeyboard p2_keyboard = InputKeyboard.arrows;
 

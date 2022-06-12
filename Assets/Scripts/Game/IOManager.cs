@@ -46,7 +46,7 @@ public class IOManager : MonoBehaviour
         turnsLeft = toggleGroupOptions.turns;
         SetGame(new CurlingGame(turnsLeft, this));
         if(game == null) return;
-        turnsText.text = "Turns left " + (turnsLeft).ToString();
+        turnsText.text = "Turns left : " + (turnsLeft).ToString();
         game.StartGame();
         currPlayer = game.GetCurrPlayer();
     }
@@ -86,13 +86,25 @@ public class IOManager : MonoBehaviour
     /// Triggered by Game
     public void OnGameEnded() 
     {   
+        turnsText.text = "Turns left : 0";
         StartCoroutine(WaitForSec(niceThrow));
         StartCoroutine(WaitForSec());
     }
     
 
-    private IEnumerator LOL(SimulationStone stone){
+    private IEnumerator RegisterVelocity(SimulationStone stone){
+            yield return new WaitForSeconds(0.4f);
+            stone.RegisterAngle();
+    }
+
+    /**
+    private IEnumerator RegisterAngle(SimulationStone stone){
             yield return new WaitForSeconds(0.5f);
+            stone.ThrowStoneFromCurrentVelocities();
+    }*/
+    
+    private IEnumerator LOL(SimulationStone stone){
+            yield return new WaitForSeconds(0.55f);
             stone.ThrowStoneFromCurrentVelocities();
     }
 
@@ -110,6 +122,7 @@ public class IOManager : MonoBehaviour
 
             stone.RegisterPosition();
             
+            StartCoroutine(RegisterVelocity(stone));
             StartCoroutine(LOL(stone));
             CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
 
@@ -141,18 +154,31 @@ public class IOManager : MonoBehaviour
 
     /// Triggered by Game
     public void ShowScore(int score, int scorer)
-    { 
+    {   if (score == 0) {
+            winnerText.text = "It's a tie! You both suck equally!";
+    } else {
         winnerText.text = "Player " + (scorer+1).ToString() + " wins with " + score.ToString() + " points!";
+
+    }
     }
 
     public void onEndTurn()
     { 
-        turnsText.text = "Turns left " + (--turnsLeft).ToString();
+        turnsText.text = "Turns left : " + (--turnsLeft).ToString();
     }
 
     /// Triggered by Game
     public void AllowNext()
     {
         continueGame.gameObject.SetActive(true);
+    }
+
+    public void OnSwapRequested(SimulationStone s1, SimulationStone s2)
+    {
+        StaticStone data1 = s1.GetLogicStone();
+        StaticStone data2 = s2.GetLogicStone();
+
+        s1.SetLogicStone(data2);
+        s2.SetLogicStone(data1);
     }
 }

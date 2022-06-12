@@ -20,9 +20,7 @@ public class TutorialManager : MonoBehaviour
     public GameObject targetStone;
     private SimulationStone simTargetStone;
 
-    private float STRAIGHT_THRESHOLD = 0.1f;
 
-    private bool straightFinished = false, curlFinished = false, takeOutFinished = false;
     private bool straightStarted = false, curlStarted = false, takeOutStarted = false, returnStarted = false, goToTarget = false;
 
     
@@ -92,7 +90,6 @@ public class TutorialManager : MonoBehaviour
     }
     void CurlThrow(){
         if(curlStarted){
-
             simStone.ThrowStoneWithFixedCurl(3.75f*(new Vector3(0.85f, 0f,0.25f)));
             curlStarted = false;
         }

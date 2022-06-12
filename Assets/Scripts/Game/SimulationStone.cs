@@ -22,7 +22,7 @@ public class SimulationStone : AgentBehaviour
     
     List<Vector3> positions = new List<Vector3>();
     Vector3 speed;
-    float angVel;
+    float angVel = 0f;
     List<Quaternion> rotations = new List<Quaternion>();
     List<float> averageAngVel = new List<float>();
 
@@ -30,11 +30,11 @@ public class SimulationStone : AgentBehaviour
     private GameObject stone;
 
     public CelluloAgent cellulo;
-    private bool first = true;
 
     private bool thrown = false;
 
     private bool isFinished = true;
+
 
     public void SetThrown(bool b){
         thrown = b;
@@ -42,6 +42,11 @@ public class SimulationStone : AgentBehaviour
     public StaticStone GetLogicStone()
     { 
         return logicStone; 
+    }
+
+    public void SetLogicStone(StaticStone logicStone)
+    { 
+        this.logicStone = logicStone;
     }
 
    
@@ -65,6 +70,7 @@ public class SimulationStone : AgentBehaviour
             traj = new Trajectory(manager, this);
         }
         cellulo.SetCasualBackdriveAssistEnabled(true);
+
         //cellulo.SetHapticBackdriveAssistEnabled(true);
 
         //positions = Enumerable.Repeat(transform.position, 100).ToList();
@@ -79,9 +85,9 @@ public class SimulationStone : AgentBehaviour
 
     Vector3 previousPos;
 
-    int count = 6;
 
     Vector3 throwPos;
+    Vector3 initPos;
     
 
     // Update is called once per frame
@@ -148,7 +154,7 @@ public class SimulationStone : AgentBehaviour
 
         steering.linear = direction().normalized * cellulo.maxSpeed;
 
-        steering.angular = angVel * cellulo.maxAngularAccel;
+        //steering.angular = angVel * cellulo.maxAngularAccel;
         
         return steering;
     }
@@ -164,18 +170,27 @@ public class SimulationStone : AgentBehaviour
 
     public void ThrowStoneFromCurrentVelocities()
     {     
-        speed = (cellulo.transform.position - throwPos)/0.5f;
+        speed = (cellulo.transform.position - throwPos)/0.40f;
+
+        if(Settings.curlsIncluded){
+           angVel = (Vector3.SignedAngle(initPos, cellulo.transform.position, Vector3.right))/2.25f;
+        }
+        
+        
         ThrowStone(speed, transform.position, angVel);
     }
 
     public void ThrowStoneWithFixedCurl(Vector3 speedVector)
-    {   
-        ThrowStone(4 * new Vector3(0.85f, 0f, -0.25f), transform.position, -0.4f); 
-        //traj.setTraj(speedVector, transform.position, -0.8f, true);
+    {    
+        traj.setTraj(4 * new Vector3(1f, 0f, 0.25f), transform.position, -0.5f, true);
     }
 
     public void RegisterPosition(){
         throwPos = transform.position;
+    }
+
+    public void RegisterAngle(){
+        initPos = transform.position;
     }
 
 
@@ -185,7 +200,8 @@ public class SimulationStone : AgentBehaviour
         angVel = angVelThrow;
         isFinished = false;
         time = 0f;
-        traj.setTraj(velocity, start, 0, true);
+        StartCoroutine(DeleteTrajectorysSpheres());
+        traj.setTraj(velocity, start, angVel, true);
         thrown = true;
     }
 
@@ -195,6 +211,7 @@ public class SimulationStone : AgentBehaviour
     }*/
 
     private void OnCollisionEnter(Collision other) {
+        collisionSound.Play();
         if(comp(other, "Stone")){
            if (thrown){ 
                 SimulationStone stone2 = other.gameObject.GetComponent<SimulationStone>();
@@ -257,17 +274,26 @@ public class SimulationStone : AgentBehaviour
             Vector3 V1 = V1mag *  new Vector3(Mathf.Cos(theta1), 0, Mathf.Sin(theta1));
             Vector3 V2 = V2mag * new Vector3(Mathf.Cos(theta2), 0, Mathf.Sin(theta2));
             
-            impactStone(V2, transform.position, angVel/2f);
-            s2.impactStone(V1, s2.getPosition(), 0f);
+            //impactStone(V2, transform.position, angVel/2f);
+
+            impactStone(V2, transform.position);
+            s2.impactStone(V1, s2.getPosition());
         
     }
 
-    public void impactStone(Vector3 speed, Vector3 start, float angVelImpact){
+
+    private IEnumerator DeleteTrajectorysSpheres(){
+        yield return new WaitForSeconds(10f);
+        traj.DeleteTrajectorysSpheres();
+    }
+
+    public void impactStone(Vector3 speed, Vector3 start){
         
-        averageAngVel = Enumerable.Repeat(angVelImpact, 20).ToList();
-        angVel = angVelImpact;
+        //averageAngVel = Enumerable.Repeat(angVelImpact, 20).ToList();
+        //angVel = angVelImpact;
         isFinished = false;
-        traj.setTraj(speed, start, angVel, false);
+        StartCoroutine(DeleteTrajectorysSpheres());
+        traj.setTraj(speed, start, 0f, false);
         
     }
 
