@@ -27,9 +27,15 @@ public class IOManager : MonoBehaviour
     public TextMeshProUGUI winnerText;
 
 
+    private int throws = 0;
     public void SetGame(Game game) 
     {
         this.game = game;
+    }
+
+    public Game GetGame()
+    {
+        return game;
     }
 
     /// Triggered by Unity
@@ -65,6 +71,11 @@ public class IOManager : MonoBehaviour
             gameOverBox.SetActive(true);
     }
 
+    private IEnumerator RecallClosestWithDelay(){
+            yield return new WaitForSeconds(3);
+            CelluloVisualisation.RecallClosestCellulo();
+    }
+
     /// Triggered by Game
     public void OnGameStarted() 
     {   
@@ -78,6 +89,14 @@ public class IOManager : MonoBehaviour
         StartCoroutine(WaitForSec(niceThrow));
         StartCoroutine(WaitForSec());
     }
+    
+
+    private IEnumerator LOL(SimulationStone stone){
+            yield return new WaitForSeconds(0.5f);
+            stone.ThrowStoneFromCurrentVelocities();
+    }
+
+
 
     /// Triggered by Unity
     /// TODO: Connecter l'évènement "Le robot passe la ligne de départ et donc est considéré comme lancé" à cette méthode (dans le code lié à Unity probablement)
@@ -86,14 +105,17 @@ public class IOManager : MonoBehaviour
         if(game == null) return;
         
         if(game.ExpectsThrow()) // if this returns false, it means that the stone was most likely thrown by accident
-        {
-            
+        {   
             this.pendingData = stone;
 
-            //stone.ThrowStoneFromCurrentVelocities();
-            stone.ThrowStone(new Vector3(0.5f, 0f, 0f), stone.getPosition(), -0.40f);
+            stone.RegisterPosition();
+            
+            StartCoroutine(LOL(stone));
+            CelluloVisualisation.SetColor(stone.cellulo, game.ActivePlayer());
 
             stone.SetThrown(true);
+            ++throws;
+
             game.ExpectedWasThrown();
         }
     }
@@ -104,6 +126,9 @@ public class IOManager : MonoBehaviour
     {  
         if(game == null || pendingData == null) return; // pendingData should normally never be null at this stage
 
+        if (throws > 2){
+            StartCoroutine(RecallClosestWithDelay());
+        }
         game.PlayThrow(pendingData.GetLogicStone());
         pendingData = null;
         

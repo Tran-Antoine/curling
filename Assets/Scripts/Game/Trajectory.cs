@@ -7,14 +7,14 @@ public class Trajectory
 
     public IOManager ioManager; // TODO: set the value
 
-    private float BEZIER_DISTANCE_THRESHOLD = 0.1f;
+    private float BEZIER_DISTANCE_THRESHOLD = 1f;
     private float SPEED_THRESHOLD = 0.1f;
-    private float ATTAINED_THERSHOLD = 0.5f;
+    private float ATTAINED_THERSHOLD = 1f;
 
 
-    public float distanceMultiplierThrow = 20f;
-    public float distanceMultiplierCollision = 4f;
-    public float curveMultiplier = 0.75f;
+    public float distanceMultiplierThrow = 5f;
+    private float distanceMultiplierCollision;
+    private float curveMultiplier;
 
     Vector3[] points = new Vector3[4];
  
@@ -49,9 +49,11 @@ public class Trajectory
     {
     }
 
+
     // Update is called once per frame
     void Update()
     {
+    
     }
 
     
@@ -73,6 +75,7 @@ public class Trajectory
                 isComputed = false;
                 reached = true;
                 resetTraj(currentPosition);
+                return currentPosition;
         }
         if(isComputed){
             if(Vector3.Distance(currentPosition, samplePoints.Peek()) < ATTAINED_THERSHOLD){
@@ -103,6 +106,9 @@ public class Trajectory
     //main method, used to calculate the trajectory
     public void setTraj(Vector3 speed, Vector3 position, float angularVelocity, bool isThrow){
 
+        distanceMultiplierCollision = distanceMultiplierThrow/3;
+        curveMultiplier = distanceMultiplierThrow/25;
+
         resetTraj(position);
 
         //start of the curve
@@ -113,15 +119,15 @@ public class Trajectory
         points[1].y = points[2].y;
 
         //last point accounts for the amount of curl
-        Quaternion quaternion =  angularVelocity > 0 ? Quaternion.Euler(0,-120,0) : Quaternion.Euler(0,120,0); 
-        points[3] = points[2] + curveMultiplier * angularVelocity * (quaternion * points[2]);
-
+        Quaternion quaternion =  angularVelocity < 0 ? Quaternion.Euler(0,-50,0) : Quaternion.Euler(0,50,0);
+        points[3] = points[2]; //+ (angularVelocity*curveMultiplier) * (quaternion * points[2]);
         //keep a history of the trajectory
         globalTraj.Add(points);
 
         isComputed = true;
         //to optimize, only take a few of the points of the bézier curve
         takeSamplePoints();
+        //showPoint(points[2], Color.yellow);
         goal = position;
     }
 
@@ -144,10 +150,6 @@ public class Trajectory
         takeSamplePoints();
         goal = position;
 
-    }
-
-    public void increaseCurl(Vector3 sweepingSpeed, Vector3 sweepingPosition){
-        
     }
 
     private void takeSamplePoints(){

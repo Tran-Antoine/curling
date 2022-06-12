@@ -14,4 +14,7 @@ public interface Game
     void MarkReadyForThrow();
     void ExpectedWasThrown();
     int GetCurrPlayer();
+
+    int ActivePlayer();
+    GameState GetState();
 }

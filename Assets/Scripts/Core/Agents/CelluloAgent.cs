@@ -30,6 +30,11 @@ public class CelluloAgent : SteeringAgent
     private float controlPeriod = Config.DEFAULT_CONTROL_PERIOD;  //!< Contol loop perid
     private Color[] previousColor = new Color[Config.CELLULO_KEYS];
 
+     public Vector3 basePosition;
+
+    private const float LINE_POS_X = 2.7f;
+     public SimulationStone stone;
+
 	/// <summary>
 	/// Called at the start to (1) assign the correct agent ID (2) set intial color. 
 	/// </summary>
@@ -40,7 +45,18 @@ public class CelluloAgent : SteeringAgent
         SetVisualEffect(0, initialColor, 0);
         for (int i = 0; i < Config.CELLULO_KEYS; i++)
             previousColor[i] = initialColor;
+        basePosition = transform.localPosition;
     }
+
+    public void SetStone(SimulationStone stone){
+        this.stone = stone;
+    }
+
+    public bool LiesBeforeLine(){
+        return gameObject.transform.localPosition.x < LINE_POS_X;
+    }
+
+
     /// <summary>
     /// Fixed update loop
     /// </summary>
@@ -56,6 +72,8 @@ public class CelluloAgent : SteeringAgent
 
     protected virtual void Update()
     { 
+
+        //Debug.Log("cellulo : " + this + ", liesbeforeLine : " + LiesBeforeLine() + ".\n gameobject.transform.position = " + gameObject.transform.position);
         for (int i = 0; i < Config.CELLULO_KEYS; i++)
         {
             if (Input.GetKeyDown(simulatedTouch[i]))
