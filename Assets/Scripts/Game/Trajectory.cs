@@ -1,20 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Threading.Tasks;
 public class Trajectory
 {
 
     public IOManager ioManager; // TODO: set the value
 
     private float BEZIER_DISTANCE_THRESHOLD = 1f;
-    private float SPEED_THRESHOLD = 0.1f;
     private float ATTAINED_THERSHOLD = 1f;
 
 
     public float distanceMultiplierThrow = 5f;
     private float distanceMultiplierCollision;
     private float curveMultiplier;
+
+    private static MonoBehaviour lol;
 
     Vector3[] points = new Vector3[4];
  
@@ -26,6 +28,8 @@ public class Trajectory
     public bool isComputed = false;
     
     private SimulationStone stone;
+
+    private List<GameObject> spheres = new List<GameObject>(); 
 
     public Trajectory(IOManager manager, SimulationStone stone){
         this.ioManager = manager;
@@ -47,6 +51,7 @@ public class Trajectory
     // Start is called before the first frame update
     void Start()
     {
+        
     }
 
 
@@ -120,7 +125,7 @@ public class Trajectory
 
         //last point accounts for the amount of curl
         Quaternion quaternion =  angularVelocity < 0 ? Quaternion.Euler(0,-50,0) : Quaternion.Euler(0,50,0);
-        points[3] = points[2]; //+ (angularVelocity*curveMultiplier) * (quaternion * points[2]);
+        points[3] = points[2] + (angularVelocity*curveMultiplier) * (quaternion * points[2]);
         //keep a history of the trajectory
         globalTraj.Add(points);
 
@@ -152,16 +157,28 @@ public class Trajectory
 
     }
 
+    public void DeleteTrajectorysSpheres(){
+        foreach(GameObject g in spheres){
+            //Debug.Log("G = " + g);
+            Object.Destroy(g);
+        }
+        spheres = new List<GameObject>();
+    }
+
     private void takeSamplePoints(){
         Vector3 nextPoint = Vector3.zero;
         for(float i = 0f; i < 1; i+= Time.deltaTime){
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
-                nextPoint = BezierCurve(i);                
-                //showPoint(BezierCurve(i), Color.green);
+                nextPoint = BezierCurve(i);    
+                if (Settings.showTrajectory){
+                    showPoint(BezierCurve(i), Color.red);
+                }            
+                
             }
         }
         //add final point
+
         samplePoints.Enqueue(points[3]);
     }
     // displays a sphere at a certain point, helps with debugging
@@ -169,8 +186,19 @@ public class Trajectory
         GameObject sphere1 = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere1.transform.position = position + 3*Vector3.up;
         var sphereRenderer1 = sphere1.GetComponent<Renderer>();
+
         sphereRenderer1.material.SetColor("_Color", color);
+        spheres.Add(sphere1);
+        //Task.Delay(2000).ContinueWith(_ => DeleteSpheres(spheres));
+        //lol.StartCoroutine(DestroySpheres(sphere1));
     }
+
+
+    /**private IEnumerator DestroySpheres(GameObject sphere){
+        yield return new WaitForSeconds(5f);
+        GameObject.Destroy(sphere);
+
+    }*/
 
     public void PrintTraj(){
         Debug.Log($"{stone.cellulo} --- points : [0] = {points[0]}, [1] = {points[1]}, [2] = {points[2]}, [3] = {points[3]}");

@@ -52,8 +52,8 @@ public class CelluloVisualisation : MonoBehaviour
     static LayerMask imagesLayer;
     static LayerMask stonesLayer;
 
-    public static Color p1 = new Color(66/256f, 135/256f, 60/256f);
-    public static Color p2 = new Color(204/256f, 155/256f, 45/256f);
+    public static Color p1;
+    public static Color p2;
 
     // Start is called before the first frame update
     void Start()
@@ -93,12 +93,10 @@ public class CelluloVisualisation : MonoBehaviour
         dummy = this;
 
         manager = testManager;
-    }
 
-    public static void SetColor(CelluloAgent agent, Vector3 agentPosition)
-    {
-        int playerId = manager.GetGame().GetState().GetClosestPlayer(agentPosition);
-        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
+        p1 = Settings.p1_color;
+        p2 = Settings.p2_color;
+        
     }
 
     public static void SetColor(CelluloAgent agent, int playerId)
@@ -120,9 +118,14 @@ public class CelluloVisualisation : MonoBehaviour
         //Destroy(agent.GetComponent<Rigidbody>());
         //agent.GetComponent<CelluloAgentRigidBody>().Delete();
         DeleteBodyRecursively(image.gameObject);
-        MoveNextImageToPosition(closest);
+        CelluloAgent moved = MoveNextImageToPosition(closest);
         closest.SetGoalPosition(image.transform.localPosition.x, image.transform.localPosition.z, image.maxAccel);
 
+        manager.OnSwapRequested(closest.stone, moved.stone);
+        manager.OnSwapRequested(closest.stone, image.stone);
+
+        UpdateColor(moved);
+        UpdateColor(closest);
         //SetColor(closest, image.transform.localPosition);
 
         dummy.StartCoroutine(RestoreStoneWithDelay(closest));
@@ -151,14 +154,20 @@ public class CelluloVisualisation : MonoBehaviour
             }
             
         }
+
+
         CelluloAgent image = MoveNextImageToPosition(map[closest]);
         //RestoreBodyRecursively(image.gameObject);
+
+        manager.OnSwapRequested(image.stone, map[closest].stone);
+        UpdateColor(image);
 
         DeleteBodyRecursively(map[closest].gameObject);
         
         dummy.StartCoroutine(RestoreStoneWithDelay(map[closest]));
         ResetAllTraj();
         MoveStoneBackHome(map[closest]);
+        
     }
 
     private static IEnumerator RestoreStoneWithDelay(CelluloAgent stone){
@@ -256,6 +265,9 @@ public class CelluloVisualisation : MonoBehaviour
     }*/
 
     static void DeleteBodyRecursively(GameObject o){
+        if(o.GetComponent<Rigidbody>() == null) {
+            return;
+        }
         o.layer = imagesLayer;
         foreach(Transform child in o.GetComponentInChildren<Transform>(true)){
             child.gameObject.layer = imagesLayer;
@@ -267,6 +279,11 @@ public class CelluloVisualisation : MonoBehaviour
         foreach(Transform child in o.GetComponentInChildren<Transform>(true)){
             child.gameObject.layer = stonesLayer;
         }
+    }
+
+    private static void UpdateColor(CelluloAgent agent){
+        int playerId = agent.stone.GetLogicStone().GetPlayer();
+        agent.SetVisualEffect(VisualEffect.VisualEffectConstAll, playerId == 0 ? p1 : p2, 1);
     }
 
     /**foreach (Transform trans in go.GetComponentsInChildren<Transform>(true))
