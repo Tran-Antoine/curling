@@ -58,6 +58,7 @@ public class AnimationScript : MonoBehaviour {
             //cellulo.SetGoalPosition(cellulo.basePosition.x, cellulo.basePosition.z, cellulo.maxAccel);
             //SetGoalPosition(agent.transform.localPosition.x, agent.transform.localPosition.z, toMove.maxAccel);
             //DeleteBody();
+
             CelluloVisualisation.MoveTo(cellulo);
             //Invoke("RestoreBody", 3);
         }

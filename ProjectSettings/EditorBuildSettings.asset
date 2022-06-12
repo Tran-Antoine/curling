@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Curling.unity
     guid: d99a7fdf42684f740a875bf5a3565828
+  - enabled: 1
+    path: Assets/Scenes/Tutorial.unity
+    guid: febb1caa68fae814987596abe1a1866c
   m_configObjects: {}

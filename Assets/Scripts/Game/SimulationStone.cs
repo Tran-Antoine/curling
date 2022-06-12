@@ -168,6 +168,12 @@ public class SimulationStone : AgentBehaviour
         ThrowStone(speed, transform.position, angVel);
     }
 
+    public void ThrowStoneWithFixedCurl(Vector3 speedVector)
+    {   
+        ThrowStone(4 * new Vector3(0.85f, 0f, -0.25f), transform.position, -0.4f); 
+        //traj.setTraj(speedVector, transform.position, -0.8f, true);
+    }
+
     public void RegisterPosition(){
         throwPos = transform.position;
     }
@@ -175,7 +181,7 @@ public class SimulationStone : AgentBehaviour
 
     public void ThrowStone(Vector3 velocity, Vector3 start, float angVelThrow){
         
-        averageAngVel = Enumerable.Repeat(angVelThrow, 20).ToList();
+        //averageAngVel = Enumerable.Repeat(angVelThrow, 20).ToList();
         angVel = angVelThrow;
         isFinished = false;
         time = 0f;
