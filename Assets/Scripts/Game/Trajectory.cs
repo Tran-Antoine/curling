@@ -158,7 +158,7 @@ public class Trajectory
             if(Vector3.Distance(nextPoint, BezierCurve(i)) > BEZIER_DISTANCE_THRESHOLD){
                 samplePoints.Enqueue(BezierCurve(i));
                 nextPoint = BezierCurve(i);                
-                showPoint(BezierCurve(i), Color.green);
+                //showPoint(BezierCurve(i), Color.green);
             }
         }
         //add final point

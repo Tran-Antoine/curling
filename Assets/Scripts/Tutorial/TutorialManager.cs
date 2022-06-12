@@ -92,7 +92,8 @@ public class TutorialManager : MonoBehaviour
     }
     void CurlThrow(){
         if(curlStarted){
-            simStone.ThrowStone(3.75f*(new Vector3(0.85f, 0f,0.25f)), simStone.getPosition(),  1.15f);
+
+            simStone.ThrowStoneWithFixedCurl(3.75f*(new Vector3(0.85f, 0f,0.25f)));
             curlStarted = false;
         }
         if(simStone.getIsFinished()){
