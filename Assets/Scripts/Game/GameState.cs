@@ -71,6 +71,7 @@ public class GameState
         stone.SetId(nStoneThrown++);
     }
 
+
     public int GetClosestPlayer(Vector3 position)
     {
         float dis = 1000000;
